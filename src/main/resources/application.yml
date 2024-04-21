@@ -1,0 +1,20 @@
+server:
+  port: ${PORT:8004}
+
+spring:
+  application:
+    name: ms-profile
+  datasource:
+    type: org.postgresql.jdbc2.optional.SimpleDataSource
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:jose}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5433/PsicoDB}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
+
