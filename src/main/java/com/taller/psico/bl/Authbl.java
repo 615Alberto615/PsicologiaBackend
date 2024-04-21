@@ -1,14 +1,17 @@
 package com.taller.psico.bl;
 import com.taller.psico.dto.PeopleDTO;
 import com.taller.psico.dto.UseriDTO;
+import com.taller.psico.entity.Domains;
 import com.taller.psico.entity.People;
 import com.taller.psico.entity.Rol;
 import com.taller.psico.entity.Useri;
 import com.taller.psico.repository.RolRepository;
 import com.taller.psico.repository.UseriRepository;
 import com.taller.psico.repository.PeopleRepository;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import jakarta.transaction.Transactional;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,14 @@ public class Authbl {
 
     @Transactional
     public UseriDTO registerUser(UseriDTO userDto, PeopleDTO peopleDto) {
+        Domains Gender = new Domains();
+        Domains Ocuppation = new Domains();
+        Domains Semester = new Domains();
+
+        Gender.setDomainsId(peopleDto.getGenderId());
+        Ocuppation.setDomainsId(peopleDto.getOccupationId());
+        Semester.setDomainsId(peopleDto.getSemesterId());
+
         People people = new People();
         people.setName(peopleDto.getName());
         people.setFirstLastname(peopleDto.getFirstLastname());
@@ -43,6 +54,9 @@ public class Authbl {
         people.setAddress(peopleDto.getAddress());
         people.setCi(peopleDto.getCi());
         people.setStatus(peopleDto.getStatus());
+        people.setGenderId(Gender);
+        people.setOccupationId(Ocuppation);
+        people.setSemesterId(Semester);
         people = peopleRepository.save(people);
 
         Rol rol = rolRepository.findById(userDto.getRolId()).orElseThrow(() -> new RuntimeException("Rol not found"));
@@ -75,10 +89,41 @@ public class Authbl {
     private String generateToken(Useri user) {
         long currentTimeMillis = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(String.valueOf(user.getUserId()))
+                //.setSubject(String.valueOf(user.getUserId()))
+                //.setSubject(String.valueOf(user.getRolId().getRolId()))
+                .claim("userId", user.getUserId())
+                .claim("rolId", user.getRolId().getRolId())
                 .setIssuedAt(new Date(currentTimeMillis))
                 .setExpiration(new Date(currentTimeMillis + 3600000)) // 1 hora de validez
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
+
+    public boolean validateToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // Aquí puedes agregar validaciones adicionales si lo deseas
+            // Por ejemplo, verificar el emisor (issuer) del token
+            // String issuer = claims.getIssuer();
+            // if (!"www.softbabysi.com".equals(issuer)) {
+            //     return false;
+            // }
+
+            return true;
+        } catch (SignatureException e) {
+            System.err.println("Token inválido: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+
 }
