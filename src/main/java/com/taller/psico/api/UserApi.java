@@ -115,5 +115,45 @@ public class UserApi {
         }
     }
 
+    @GetMapping("/byRole/{roleId}")
+    public ResponseEntity<ResponseDTO<List<UseriDTO>>> findUsersByRole(@PathVariable Integer roleId, @RequestHeader("Authorization") String token) {
+        if (!authbl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
+        try {
+            List<UseriDTO> users = userBl.findUsersByRoleId(roleId);
+            if (users.isEmpty()) {
+                return ResponseEntity.ok(new ResponseDTO<>(404, null, "No users found for the role"));
+            }
+            return ResponseEntity.ok(new ResponseDTO<>(200, users, "Users found"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(500, null, "An error occurred while fetching the users"));
+        }
+    }
+
+    @GetMapping("/peopleByRole/{roleId}")
+    public ResponseEntity<ResponseDTO<List<PeopleDTO>>> findPeopleByRole(
+            @PathVariable Integer roleId,
+            @RequestHeader("Authorization") String token,
+            @RequestParam(defaultValue = "0") int page,  // Page indexing starts at 0
+            @RequestParam(defaultValue = "3") int size) {
+
+        if (!authbl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
+        try {
+            List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId, page, size);
+            if (people.isEmpty()) {
+                return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
+            }
+            return ResponseEntity.ok(new ResponseDTO<>(200, people, "People found"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(500, null, "An error occurred while fetching the people"));
+        }
+    }
+
+
 
 }

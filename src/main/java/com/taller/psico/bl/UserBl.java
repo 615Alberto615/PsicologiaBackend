@@ -7,6 +7,8 @@ import com.taller.psico.entity.Useri;
 import com.taller.psico.repository.PeopleRepository;
 import com.taller.psico.repository.UseriRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class UserBl {
 
     @Autowired
     private UseriRepository userRepository;
-
-
+    @Autowired
+    private PeopleRepository peopleRepository;
 
     //Mostrar usuario por id
     public UseriDTO findByIdUser(Integer userId){
@@ -81,6 +83,20 @@ public class UserBl {
                 .collect(Collectors.toList());
     }
 
+    public List<UseriDTO> findUsersByRoleId(Integer rolId) {
+        return userRepository.findByRolId(rolId).stream()
+                .map(this::convertToUseriDTO)
+                .collect(Collectors.toList());
+    }
+    public List<PeopleDTO> findPeopleByRoleId(Integer rolId, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<People> peoplePage = peopleRepository.findPeopleByRoleId(rolId, pageRequest);
+        return peoplePage.getContent().stream()  // Ensure you use getContent to get the list from the Page object
+                .map(this::convertToPeopleDTO)
+                .collect(Collectors.toList());
+    }
+
+
     private UseriDTO convertToUseriDTO(Useri user) {
         UseriDTO dto = new UseriDTO();
         dto.setUserId(user.getUserId());
@@ -90,5 +106,22 @@ public class UserBl {
         dto.setRolId(user.getRolId().getRolId());
         return dto;
     }
+
+    private PeopleDTO convertToPeopleDTO(People people) {
+        PeopleDTO dto = new PeopleDTO();
+        dto.setPeopleId(people.getPeopleId());
+        dto.setName(people.getName());
+        dto.setFirstLastname(people.getFirstLastname());
+        dto.setSecondLastname(people.getSecondLastname());
+        dto.setEmail(people.getEmail());
+        dto.setAge(people.getAge());
+        dto.setCellphone(people.getCellphone());
+        dto.setAddress(people.getAddress());
+        dto.setCi(people.getCi());
+        dto.setStatus(people.getStatus());
+        return dto;
+    }
+
+
 
 }
