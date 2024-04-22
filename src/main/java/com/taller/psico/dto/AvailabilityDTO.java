@@ -1,5 +1,7 @@
 package com.taller.psico.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,7 +10,10 @@ public class AvailabilityDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer availabilityId;
     private Date weekday;
+    @JsonFormat(pattern="HH:mm:ss")
     private Date startTime;
+
+    @JsonFormat(pattern="HH:mm:ss")
     private Date endTime;
     private int codeAvailability;
     private boolean status;

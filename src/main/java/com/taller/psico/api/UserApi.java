@@ -5,15 +5,22 @@ import com.taller.psico.bl.UserBl;
 import com.taller.psico.dto.PeopleDTO;
 import com.taller.psico.dto.ResponseDTO;
 import com.taller.psico.dto.UseriDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*", methods = {org.springframework.web.bind.annotation.RequestMethod.GET, org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.PUT, org.springframework.web.bind.annotation.RequestMethod.DELETE})
 
 public class UserApi {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserApi.class);
 
     @Autowired
     private UserBl userBl;
@@ -63,6 +70,50 @@ public class UserApi {
         }
     }
 
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<ResponseDTO<Void>> deleteUser(@PathVariable Integer userId, @RequestHeader("Authorization") String token) {
+        logger.info("Request to delete user with ID: {}", userId);
+
+        if (!authbl.validateToken(token)) {
+            logger.error("Invalid token provided for deletion.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
+
+        try {
+            boolean deleted = userBl.deleteUser(userId);
+            if (deleted) {
+                logger.info("User deleted successfully for ID: {}", userId);
+                return ResponseEntity.ok(new ResponseDTO<>(200, null, "User deleted successfully."));
+            } else {
+                logger.warn("No user found with ID: {}", userId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDTO<>(404, null, "User not found."));
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while deleting user with ID: {}. Error: {}", userId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(500, null, "An error occurred while deleting the user."));
+        }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ResponseDTO<List<UseriDTO>>> getAllUsers(@RequestHeader("Authorization") String token) {
+        logger.info("Request received to fetch all users.");
+
+        if (!authbl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching users.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
+
+        try {
+            List<UseriDTO> users = userBl.getAllUsers();
+            logger.info("Successfully fetched all users. Number of users: {}", users.size());
+            return ResponseEntity.ok(new ResponseDTO<>(200, users, "Users fetched successfully."));
+        } catch (Exception e) {
+            logger.error("Error occurred while fetching all users: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(500, null, "An error occurred while fetching the users."));
+        }
+    }
 
 
 }

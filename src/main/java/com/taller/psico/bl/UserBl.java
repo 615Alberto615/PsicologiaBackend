@@ -9,6 +9,9 @@ import com.taller.psico.repository.UseriRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserBl {
 
@@ -44,6 +47,7 @@ public class UserBl {
         userRepository.save(useri);
     }
 
+
     //Mostrar persona por id de usuario
     public PeopleDTO findByIdPerson(Integer userId){
         PeopleDTO peopleDTO = new PeopleDTO();
@@ -61,9 +65,30 @@ public class UserBl {
         return peopleDTO;
     }
 
+    public boolean deleteUser(Integer userId) {
+        Useri user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setStatus(false);  // Assuming there's a 'status' field to indicate activity
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 
+    public List<UseriDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::convertToUseriDTO)
+                .collect(Collectors.toList());
+    }
 
-
-
+    private UseriDTO convertToUseriDTO(Useri user) {
+        UseriDTO dto = new UseriDTO();
+        dto.setUserId(user.getUserId());
+        dto.setUserName(user.getUserName());
+        dto.setStatus(user.getStatus());
+        dto.setPeopleId(user.getPeopleId().getPeopleId());
+        dto.setRolId(user.getRolId().getRolId());
+        return dto;
+    }
 
 }
