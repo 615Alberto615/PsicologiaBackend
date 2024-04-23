@@ -35,6 +35,10 @@ public class QuoteApi {
         }
         try {
             QuotesDTO result = quoteBl.createQuote(quoteDTO);
+            if (result == null) {
+                logger.info("No more slots available for this time.");
+                return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "No more slots available for this time."));
+            }
             logger.info("Quote created successfully with ID: {}", result.getQuotesId());
             return ResponseEntity.ok(new ResponseDTO<>(200, result, "Cita creada exitosamente."));
         } catch (Exception e) {
@@ -42,6 +46,7 @@ public class QuoteApi {
             return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al crear cita: " + e.getMessage()));
         }
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getAllQuotes(@RequestHeader("Authorization") String token) {

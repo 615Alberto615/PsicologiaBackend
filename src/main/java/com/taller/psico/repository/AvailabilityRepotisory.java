@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface AvailabilityRepotisory extends JpaRepository<Availability, Integer> {
     List<Availability> findByUserIdUserId(int userId);
+
+
 }

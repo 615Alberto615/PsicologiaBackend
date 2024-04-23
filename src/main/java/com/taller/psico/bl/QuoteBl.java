@@ -5,8 +5,10 @@ import com.taller.psico.entity.AppointmentStatus;
 import com.taller.psico.entity.Availability;
 import com.taller.psico.entity.Quotes;
 import com.taller.psico.entity.Useri;
+import com.taller.psico.repository.AvailabilityRepotisory;
 import com.taller.psico.repository.QuotesRepository;
 import com.taller.psico.repository.UseriRepository;
+import com.taller.psico.repository.AppointmentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +22,29 @@ public class QuoteBl {
     private QuotesRepository quotesRepository;
 
     @Autowired
-    private UseriRepository useriRepository; // Ensure you have this repository for fetching Useri
+    private AvailabilityRepotisory availabilityRepository;
 
-    // Create a new quote
-    public QuotesDTO createQuote(QuotesDTO quoteDTO) {
-        Quotes quote = convertToEntity(new Quotes(), quoteDTO);
-        Quotes savedQuote = quotesRepository.save(quote);
-        return convertToDTO(savedQuote);
+    @Autowired
+    private UseriRepository useriRepository;
+
+    @Autowired
+    private AppointmentStatusRepository appointmentStatusRepository;
+
+    // Método para crear una nueva cita considerando la disponibilidad
+    public QuotesDTO createQuote(QuotesDTO quoteDTO) throws Exception {
+        Availability availability = availabilityRepository.findById(quoteDTO.getAvailabilityId())
+                .orElseThrow(() -> new RuntimeException("Availability not found"));
+
+        List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
+        if (existingQuotes.size() < 2) {
+            Quotes quote = convertToEntity(new Quotes(), quoteDTO);
+            Quotes savedQuote = quotesRepository.save(quote);
+            return convertToDTO(savedQuote);
+        } else {
+            throw new Exception("No more slots available for this time.");
+        }
     }
+
 
     // Get all quotes
     public List<QuotesDTO> getAllQuotes() {
@@ -89,9 +106,20 @@ public class QuoteBl {
         quote.setTypeQuotes(quoteDTO.getTypeQuotes());
         quote.setStatus(quoteDTO.isStatus());
         quote.setAppointmentRequest(quoteDTO.getAppointmentRequest());
-        quote.setAppointmentStatusId(new AppointmentStatus(quoteDTO.getAppointmentStatusId())); // Make sure you have appropriate constructors in AppointmentStatus
-        quote.setAvailabilityId(new Availability(quoteDTO.getAvailabilityId())); // Make sure you have appropriate constructors in Availability
-        quote.setUserId(new Useri(quoteDTO.getUserId())); // Make sure you have appropriate constructors in Useri
+
+        // Ensure all related entities are fetched correctly
+        Availability availability = availabilityRepository.findById(quoteDTO.getAvailabilityId())
+                .orElseThrow(() -> new RuntimeException("Availability not found"));
+        quote.setAvailabilityId(availability);
+
+        Useri user = useriRepository.findById(quoteDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        quote.setUserId(user);
+
+        AppointmentStatus appointmentStatus = appointmentStatusRepository.findById(quoteDTO.getAppointmentStatusId())
+                .orElseThrow(() -> new RuntimeException("Appointment Status not found"));
+        quote.setAppointmentStatusId(appointmentStatus);
+
         return quote;
     }
 }

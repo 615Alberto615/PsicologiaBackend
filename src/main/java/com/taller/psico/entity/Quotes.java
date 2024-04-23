@@ -38,8 +38,8 @@ public class Quotes implements Serializable {
     @JoinColumn(name = "appointment_status_id", referencedColumnName = "appointment_status_id")
     @ManyToOne(optional = false)
     private AppointmentStatus appointmentStatusId;
-    @JoinColumn(name = "availability_id", referencedColumnName = "availability_id")
     @ManyToOne(optional = false)
+    @JoinColumn(name = "availability_id", referencedColumnName = "availability_id")
     private Availability availabilityId;
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
