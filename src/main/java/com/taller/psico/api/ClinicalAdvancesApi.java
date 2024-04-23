@@ -23,9 +23,9 @@ public class ClinicalAdvancesApi {
     private Authbl authBl;  // Authentication service
 
     //Crear un avance clinico
-    @PostMapping("/create")
-    public ResponseEntity<ResponseDTO<ClinicalAdvancesDTO>> createClinicalAdvances(@RequestBody ClinicalAdvancesDTO clinicalAdvancesDto, @RequestHeader("Authorization") String token){
-        clinicalAdvancesBl.createClinicalAdvance(clinicalAdvancesDto);
+    @PostMapping("/create/{treatmentId}")
+    public ResponseEntity<ResponseDTO<ClinicalAdvancesDTO>> createClinicalAdvances(@RequestBody ClinicalAdvancesDTO clinicalAdvancesDto, @RequestHeader("Authorization") String token, @PathVariable Integer treatmentId){
+        clinicalAdvancesBl.createClinicalAdvance(clinicalAdvancesDto, treatmentId);
         try {
             if (!authBl.validateToken(token)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));

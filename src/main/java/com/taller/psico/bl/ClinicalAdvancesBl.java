@@ -17,10 +17,10 @@ public class ClinicalAdvancesBl {
     private ClinicalAdvancesRepository clinicalAdvancesRepository;
 
     //Crear un avance clinico
-    public Integer createClinicalAdvance(ClinicalAdvancesDTO clinicalAdvancesDto){
+    public Integer createClinicalAdvance(ClinicalAdvancesDTO clinicalAdvancesDto, Integer treatmentId){
         ClinicalAdvances clinicalAdvances = new ClinicalAdvances();
         Treatment treatment = new Treatment();
-        treatment.setTreatmentId(clinicalAdvancesDto.getTreatmentId());
+        treatment.setTreatmentId(treatmentId);
         clinicalAdvances.setTreatmentId(treatment);
         clinicalAdvances.setDescriptionAdvance(clinicalAdvancesDto.getDescriptionAdvance());
         clinicalAdvances.setDateAdvance(clinicalAdvancesDto.getDateAdvance());
@@ -28,6 +28,7 @@ public class ClinicalAdvancesBl {
         clinicalAdvances.setCompanions(clinicalAdvancesDto.getCompanions());
         clinicalAdvances.setDoctorDerivation(clinicalAdvancesDto.getDoctorDerivation());
         clinicalAdvances.setPlaceDerivation(clinicalAdvancesDto.getPlaceDerivation());
+        clinicalAdvances.setReceptionDate(clinicalAdvancesDto.getReceptionDate());
         clinicalAdvances.setStatus(true);
         clinicalAdvances.setTypeIntervation(clinicalAdvancesDto.getTypeIntervation());
         clinicalAdvancesRepository.save(clinicalAdvances);

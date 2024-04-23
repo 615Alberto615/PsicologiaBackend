@@ -12,6 +12,7 @@ public class Prescription implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "prescription_id")
     private Integer prescriptionId;
