@@ -1,5 +1,6 @@
 package com.taller.psico.bl;
 import com.taller.psico.dto.PeopleDTO;
+import com.taller.psico.dto.TokenDTO;
 import com.taller.psico.dto.UseriDTO;
 import com.taller.psico.entity.Domains;
 import com.taller.psico.entity.People;
@@ -75,12 +76,17 @@ public class Authbl {
         return userDto;
     }
 
-    public String loginUser(String username, String password) {
+    public TokenDTO loginUser(String username, String password) {
         Optional<Useri> userOpt = userRepository.findByUserName(username);
+        TokenDTO tokenDTO = new TokenDTO();
         if (userOpt.isPresent()) {
             Useri user = userOpt.get();
             if (BCrypt.checkpw(password, user.getPassword())) {
-                return generateToken(user);
+                String token = generateToken(user);
+                tokenDTO.setToken(token);
+                tokenDTO.setId(user.getUserId());
+                tokenDTO.setRol(user.getRolId().getRolId());
+                return tokenDTO;
             }
         }
         throw new RuntimeException("Invalid credentials");

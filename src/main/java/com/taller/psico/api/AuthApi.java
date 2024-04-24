@@ -3,6 +3,7 @@ package com.taller.psico.api;
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.dto.PeopleDTO;
 import com.taller.psico.dto.ResponseDTO;
+import com.taller.psico.dto.TokenDTO;
 import com.taller.psico.dto.UseriDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +35,11 @@ public class AuthApi {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO<String>> loginUser(@RequestBody UseriDTO userDto) {
+    public ResponseEntity<ResponseDTO<TokenDTO>> loginUser(@RequestBody UseriDTO userDto) {
         try {
             logger.info("Attempting to login user: {}", userDto.getUserName());
-            String token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
+            TokenDTO token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
+            //String token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
             logger.info("Login successful for user: {}", userDto.getUserName());
             return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), token, "Login successful"));
         } catch (RuntimeException e) {

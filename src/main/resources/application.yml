@@ -7,8 +7,8 @@ spring:
   datasource:
     type: org.postgresql.jdbc2.optional.SimpleDataSource
     username: ${POSTGRES_USERNAME:postgres}
-    password: ${POSTGRES_PASSWORD:jose}
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5433/PsicoDB}
+    password: ${POSTGRES_PASSWORD:password}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PsicoDB}
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,4 +17,15 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 25MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: asapsitterapp@gmail.com
+    password: xecepobgdgtwcnnk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
