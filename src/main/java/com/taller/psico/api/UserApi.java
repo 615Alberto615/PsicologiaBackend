@@ -2,6 +2,7 @@ package com.taller.psico.api;
 
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.UserBl;
+import com.taller.psico.dto.PaginatedResponseDTO;
 import com.taller.psico.dto.PeopleDTO;
 import com.taller.psico.dto.ResponseDTO;
 import com.taller.psico.dto.UseriDTO;
@@ -135,15 +136,13 @@ public class UserApi {
     @GetMapping("/peopleByRole/{roleId}")
     public ResponseEntity<ResponseDTO<List<PeopleDTO>>> findPeopleByRole(
             @PathVariable Integer roleId,
-            @RequestHeader("Authorization") String token,
-            @RequestParam(defaultValue = "0") int page,  // Page indexing starts at 0
-            @RequestParam(defaultValue = "3") int size) {
+            @RequestHeader("Authorization") String token) {
 
         if (!authbl.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
         }
         try {
-            List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId, page, size);
+            List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId);
             if (people.isEmpty()) {
                 return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
             }
@@ -153,6 +152,8 @@ public class UserApi {
                     .body(new ResponseDTO<>(500, null, "An error occurred while fetching the people"));
         }
     }
+
+
 
 
 

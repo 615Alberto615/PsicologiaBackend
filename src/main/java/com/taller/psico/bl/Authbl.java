@@ -37,14 +37,16 @@ public class Authbl {
 
     @Transactional
     public UseriDTO registerUser(UseriDTO userDto, PeopleDTO peopleDto) {
+        // Configuración de dominios
         Domains Gender = new Domains();
-        Domains Ocuppation = new Domains();
+        Domains Occupation = new Domains();
         Domains Semester = new Domains();
 
         Gender.setDomainsId(peopleDto.getGenderId());
-        Ocuppation.setDomainsId(peopleDto.getOccupationId());
+        Occupation.setDomainsId(peopleDto.getOccupationId());
         Semester.setDomainsId(peopleDto.getSemesterId());
 
+        // Creación de la entidad People
         People people = new People();
         people.setName(peopleDto.getName());
         people.setFirstLastname(peopleDto.getFirstLastname());
@@ -56,12 +58,14 @@ public class Authbl {
         people.setCi(peopleDto.getCi());
         people.setStatus(peopleDto.getStatus());
         people.setGenderId(Gender);
-        people.setOccupationId(Ocuppation);
+        people.setOccupationId(Occupation);
         people.setSemesterId(Semester);
         people = peopleRepository.save(people);
 
+        // Búsqueda del Rol
         Rol rol = rolRepository.findById(userDto.getRolId()).orElseThrow(() -> new RuntimeException("Rol not found"));
 
+        // Creación de la entidad Useri
         Useri user = new Useri();
         user.setUserName(userDto.getUserName());
         user.setPassword(BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()));
@@ -70,11 +74,31 @@ public class Authbl {
         user.setRolId(rol);
         user = userRepository.save(user);
 
+        // Configuración del UseriDTO para devolver
         userDto.setUserId(user.getUserId());
-        userDto.setPeopleId(people.getPeopleId());
-        userDto.setRolId(rol.getRolId()); // Ensure you return the correct rolId if needed
+        userDto.setPeople(convertToPeopleDTO(people));
+        userDto.setRolId(rol.getRolId());
         return userDto;
     }
+
+    public static PeopleDTO convertToPeopleDTO(People people) {
+        if (people == null) {
+            return null;
+        }
+        PeopleDTO dto = new PeopleDTO();
+        dto.setPeopleId(people.getPeopleId());
+        dto.setName(people.getName());
+        dto.setFirstLastname(people.getFirstLastname());
+        dto.setSecondLastname(people.getSecondLastname());
+        dto.setEmail(people.getEmail());
+        dto.setAge(people.getAge());
+        dto.setCellphone(people.getCellphone());
+        dto.setAddress(people.getAddress());
+        dto.setCi(people.getCi());
+        dto.setStatus(people.getStatus());
+        return dto;
+    }
+
 
     public TokenDTO loginUser(String username, String password) {
         Optional<Useri> userOpt = userRepository.findByUserName(username);
@@ -115,13 +139,6 @@ public class Authbl {
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(token)
                     .getBody();
-
-            // Aquí puedes agregar validaciones adicionales si lo deseas
-            // Por ejemplo, verificar el emisor (issuer) del token
-            // String issuer = claims.getIssuer();
-            // if (!"www.softbabysi.com".equals(issuer)) {
-            //     return false;
-            // }
 
             return true;
         } catch (SignatureException e) {

@@ -10,6 +10,5 @@ import java.util.List;
 
 public interface PeopleRepository extends JpaRepository<People, Integer> {
     @Query("SELECT p FROM People p JOIN p.useriCollection u WHERE u.rolId.rolId = :rolId")
-    Page<People> findPeopleByRoleId(Integer rolId, Pageable pageable);
-
+    List<People> findPeopleByRoleId(Integer rolId);
 }

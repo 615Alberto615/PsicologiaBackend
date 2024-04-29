@@ -4,8 +4,6 @@ import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.AvailabilityBl;
 import com.taller.psico.dto.AvailabilityDTO;
 import com.taller.psico.dto.ResponseDTO;
-import com.taller.psico.entity.Availability;
-import com.taller.psico.repository.AvailabilityRepotisory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,31 +15,32 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1/availability")
+@RequestMapping("/api/v1/availability")
 public class AvailabilityApi {
     private static final Logger logger = LoggerFactory.getLogger(AvailabilityApi.class);
     private final AvailabilityBl availabilityBl;
     private final Authbl authBl;
-    private AvailabilityRepotisory availabilityRepository;
-
 
     @Autowired
-    public AvailabilityApi(AvailabilityBl availabilityBl, Authbl authBl, AvailabilityRepotisory availabilityRepository) {
+    public AvailabilityApi(AvailabilityBl availabilityBl, Authbl authBl) {
         this.availabilityBl = availabilityBl;
-        this.availabilityRepository = availabilityRepository;
         this.authBl = authBl;
     }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO<AvailabilityDTO>> createAvailability(@RequestBody AvailabilityDTO availabilityDTO, @RequestHeader("Authorization") String token) {
-        logger.info("Creating availability for user ID: {}", availabilityDTO.getUserId());
+        if (availabilityDTO.getUser() == null || availabilityDTO.getUser().getUserId() == null) {
+            logger.warn("User ID is missing in the request.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "User ID is missing"));
+        }
+        logger.info("Creating availability for user ID: {}", availabilityDTO.getUser().getUserId());
         if (!authBl.validateToken(token)) {
             logger.warn("Unauthorized access attempt with invalid token.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
         }
         try {
             AvailabilityDTO createdAvailability = availabilityBl.createAvailability(availabilityDTO);
-            logger.info("Availability created successfully with ID: {}", createdAvailability.getUserId());
+            logger.info("Availability created successfully with ID: {}", createdAvailability.getAvailabilityId());
             return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), createdAvailability, "Availability created successfully"));
         } catch (Exception e) {
             logger.error("Failed to create availability: {}", e.getMessage());
@@ -125,11 +124,6 @@ public class AvailabilityApi {
             logger.error("Invalid token provided for deletion.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
         }
-        Optional<Availability> availability = availabilityRepository.findById(availabilityId);
-        if (!availability.isPresent()) {
-            logger.warn("No availability found for ID: {}", availabilityId);
-            return ResponseEntity.notFound().build();
-        }
         try {
             availabilityBl.deleteAvailabilityLogically(availabilityId);
             logger.info("Availability logically deleted for ID: {}", availabilityId);
@@ -140,5 +134,4 @@ public class AvailabilityApi {
                     .body(new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, "An error occurred while deleting the availability."));
         }
     }
-
 }

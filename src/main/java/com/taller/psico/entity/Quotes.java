@@ -44,6 +44,15 @@ public class Quotes implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Useri userId;
+
+    @Column(name = "start_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
+
+    @Column(name = "end_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quotesId")
     private Collection<Notification> notificationCollection;
 
@@ -54,12 +63,18 @@ public class Quotes implements Serializable {
         this.quotesId = quotesId;
     }
 
-    public Quotes(Integer quotesId, String reason, String typeQuotes, boolean status, Date appointmentRequest) {
+    public Quotes(Integer quotesId, String reason, String typeQuotes, boolean status, Date appointmentRequest, AppointmentStatus appointmentStatusId, Availability availabilityId, Useri userId, Date startTime, Date endTime, Collection<Notification> notificationCollection) {
         this.quotesId = quotesId;
         this.reason = reason;
         this.typeQuotes = typeQuotes;
         this.status = status;
         this.appointmentRequest = appointmentRequest;
+        this.appointmentStatusId = appointmentStatusId;
+        this.availabilityId = availabilityId;
+        this.userId = userId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.notificationCollection = notificationCollection;
     }
 
     public Integer getQuotesId() {
@@ -86,7 +101,7 @@ public class Quotes implements Serializable {
         this.typeQuotes = typeQuotes;
     }
 
-    public boolean getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
@@ -126,6 +141,22 @@ public class Quotes implements Serializable {
         this.userId = userId;
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     public Collection<Notification> getNotificationCollection() {
         return notificationCollection;
     }
@@ -135,29 +166,20 @@ public class Quotes implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (quotesId != null ? quotesId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Quotes)) {
-            return false;
-        }
-        Quotes other = (Quotes) object;
-        if ((this.quotesId == null && other.quotesId != null) || (this.quotesId != null && !this.quotesId.equals(other.quotesId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public String toString() {
-        return "entity.Quotes[ quotesId=" + quotesId + " ]";
+        return "Quotes{" +
+                "quotesId=" + quotesId +
+                ", reason='" + reason + '\'' +
+                ", typeQuotes='" + typeQuotes + '\'' +
+                ", status=" + status +
+                ", appointmentRequest=" + appointmentRequest +
+                ", appointmentStatusId=" + appointmentStatusId +
+                ", availabilityId=" + availabilityId +
+                ", userId=" + userId +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", notificationCollection=" + notificationCollection +
+                '}';
     }
-
 }
 
