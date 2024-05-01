@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/availability")
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class AvailabilityApi {
     private static final Logger logger = LoggerFactory.getLogger(AvailabilityApi.class);
     private final AvailabilityBl availabilityBl;

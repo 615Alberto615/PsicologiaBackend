@@ -12,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
-@CrossOrigin(origins = "*", methods = {org.springframework.web.bind.annotation.RequestMethod.GET, org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.PUT, org.springframework.web.bind.annotation.RequestMethod.DELETE})
-
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class UserApi {
 
     private static final Logger logger = LoggerFactory.getLogger(UserApi.class);
@@ -137,17 +137,39 @@ public class UserApi {
             @PathVariable Integer roleId,
             @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "0") int page,  // Page indexing starts at 0
-            @RequestParam(defaultValue = "3") int size) {
+            @RequestParam(defaultValue = "3") int size,
+            @RequestParam(defaultValue = "false") boolean getAll) {
 
         if (!authbl.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
         }
+
         try {
-            List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId, page, size);
-            if (people.isEmpty()) {
-                return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
+            if(getAll) {
+                List<PeopleDTO> allPeople = new ArrayList<>();
+                List<PeopleDTO> currentPage;
+                int currentPageIndex = 0;
+
+                // Fetch all pages until empty response is received
+                do {
+                    currentPage = userBl.findPeopleByRoleId(roleId, currentPageIndex++, size);
+                    if(!currentPage.isEmpty()) {
+                        allPeople.addAll(currentPage);
+                    }
+                } while(!currentPage.isEmpty());
+
+                if (allPeople.isEmpty()) {
+                    return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
+                }
+
+                return ResponseEntity.ok(new ResponseDTO<>(200, allPeople, "All people found"));
+            } else {
+                List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId, page, size);
+                if (people.isEmpty()) {
+                    return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
+                }
+                return ResponseEntity.ok(new ResponseDTO<>(200, people, "People found"));
             }
-            return ResponseEntity.ok(new ResponseDTO<>(200, people, "People found"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO<>(500, null, "An error occurred while fetching the people"));
