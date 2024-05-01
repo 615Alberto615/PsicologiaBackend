@@ -3,30 +3,19 @@ package com.taller.psico.dto;
 import java.io.Serializable;
 
 public class UseriDTO implements Serializable {
-
     private static final long serialVersionUID = 1L;
     private Integer userId;
     private String userName;
     private String password;  // Consider encryption or hashing in real scenarios
     private boolean status;
-    private Integer peopleId; // Only the ID of the associated People entity
-    private Integer rolId;    // Only the ID of the associated Rol entity
+    private PeopleDTO people;  // Objeto completo PeopleDTO en lugar de solo el ID
+    private Integer rolId;
 
-    // Empty constructor
+    // Constructor vacío
     public UseriDTO() {
     }
 
-    // Constructor with all fields
-    public UseriDTO(Integer userId, String userName, String password, boolean status, Integer peopleId, Integer rolId) {
-        this.userId = userId;
-        this.userName = userName;
-        this.password = password;
-        this.status = status;
-        this.peopleId = peopleId;
-        this.rolId = rolId;
-    }
-
-    // Getters and Setters
+    // Getters y setters
     public Integer getUserId() {
         return userId;
     }
@@ -59,12 +48,12 @@ public class UseriDTO implements Serializable {
         this.status = status;
     }
 
-    public Integer getPeopleId() {
-        return peopleId;
+    public PeopleDTO getPeople() {
+        return people;
     }
 
-    public void setPeopleId(Integer peopleId) {
-        this.peopleId = peopleId;
+    public void setPeople(PeopleDTO people) {
+        this.people = people;
     }
 
     public Integer getRolId() {
@@ -73,18 +62,5 @@ public class UseriDTO implements Serializable {
 
     public void setRolId(Integer rolId) {
         this.rolId = rolId;
-    }
-
-    // toString method
-    @Override
-    public String toString() {
-        return "UseriDTO{" +
-                "userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +  // Displaying password is generally not advised
-                ", status=" + status +
-                ", peopleId=" + peopleId +
-                ", rolId=" + rolId +
-                '}';
     }
 }

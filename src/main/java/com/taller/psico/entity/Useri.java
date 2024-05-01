@@ -43,6 +43,7 @@ public class Useri implements Serializable {
     @JoinColumn(name = "rol_id", referencedColumnName = "rol_id")
     @ManyToOne(optional = false)
     private Rol rolId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<PreTreatment> preTreatmentCollection;
 

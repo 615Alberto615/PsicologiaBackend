@@ -17,24 +17,24 @@ public class AvailabilityDTO implements Serializable {
     private Date endTime;
     private int codeAvailability;
     private boolean status;
-    private Integer userId;  // Sólo el ID del usuario asociado
+    private UseriDTO user; // Sólo el ID del usuario asociado
 
     // Constructor vacío
     public AvailabilityDTO() {
     }
 
     // Constructor con todos los campos
-    public AvailabilityDTO(Integer availabilityId, Date weekday, Date startTime, Date endTime, int codeAvailability, boolean status, Integer userId) {
+
+    public AvailabilityDTO(Integer availabilityId, Date weekday, Date startTime, Date endTime, int codeAvailability, boolean status, UseriDTO user) {
         this.availabilityId = availabilityId;
         this.weekday = weekday;
         this.startTime = startTime;
         this.endTime = endTime;
         this.codeAvailability = codeAvailability;
         this.status = status;
-        this.userId = userId;
+        this.user = user;
     }
 
-    // Getters y Setters
     public Integer getAvailabilityId() {
         return availabilityId;
     }
@@ -83,15 +83,14 @@ public class AvailabilityDTO implements Serializable {
         this.status = status;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public UseriDTO getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(UseriDTO user) {
+        this.user = user;
     }
 
-    // Método toString
     @Override
     public String toString() {
         return "AvailabilityDTO{" +
@@ -101,7 +100,7 @@ public class AvailabilityDTO implements Serializable {
                 ", endTime=" + endTime +
                 ", codeAvailability=" + codeAvailability +
                 ", status=" + status +
-                ", userId=" + userId +
+                ", user=" + user +
                 '}';
     }
 }

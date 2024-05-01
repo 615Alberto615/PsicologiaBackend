@@ -143,4 +143,27 @@ public class QuoteApi {
             return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al eliminar la cita: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/by-therapist/{therapistId}")
+    public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getQuotesByTherapistId(@PathVariable int therapistId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for therapist with ID: {}", therapistId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching therapist quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesDTO> therapistQuotes = quoteBl.getQuotesByTherapistId(therapistId);
+            if (!therapistQuotes.isEmpty()) {
+                logger.info("Quotes for therapist ID {} retrieved successfully", therapistId);
+                return ResponseEntity.ok(new ResponseDTO<>(200, therapistQuotes, "Citas del terapeuta recuperadas exitosamente."));
+            } else {
+                logger.info("No quotes found for therapist ID: {}", therapistId);
+                return ResponseEntity.ok(new ResponseDTO<>(200, therapistQuotes, "No se encontraron citas para el terapeuta indicado."));
+            }
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for therapist ID {}: {}", therapistId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del terapeuta: " + e.getMessage()));
+        }
+    }
+
 }

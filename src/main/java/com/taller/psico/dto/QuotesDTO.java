@@ -3,31 +3,34 @@ package com.taller.psico.dto;
 import java.util.Date;
 
 public class QuotesDTO {
-
-    private static final long serialVersionUID = 1L;
     private Integer quotesId;
     private String reason;
     private String typeQuotes;
     private boolean status;
     private Date appointmentRequest;
-    private Integer appointmentStatusId;  // Only the ID of the appointment status
-    private Integer availabilityId;       // Only the ID of the availability
-    private Integer userId;
+    private Integer appointmentStatusId;
+    private AvailabilityDTO availability; // Cambiado de availabilityId a AvailabilityDTO
+    private UseriDTO user; // Cambiado de userId a UseriDTO
+    private Date startTime;
+    private Date endTime;
 
     public QuotesDTO() {
     }
 
-    public QuotesDTO(Integer quotesId, String reason, String typeQuotes, boolean status, Date appointmentRequest, Integer appointmentStatusId, Integer availabilityId, Integer userId) {
+    public QuotesDTO(Integer quotesId, String reason, String typeQuotes, boolean status, Date appointmentRequest, Integer appointmentStatusId, AvailabilityDTO availability, UseriDTO user, Date startTime, Date endTime) {
         this.quotesId = quotesId;
         this.reason = reason;
         this.typeQuotes = typeQuotes;
         this.status = status;
         this.appointmentRequest = appointmentRequest;
         this.appointmentStatusId = appointmentStatusId;
-        this.availabilityId = availabilityId;
-        this.userId = userId;
+        this.availability = availability;
+        this.user = user;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
+    // Getters and Setters
     public Integer getQuotesId() {
         return quotesId;
     }
@@ -76,33 +79,35 @@ public class QuotesDTO {
         this.appointmentStatusId = appointmentStatusId;
     }
 
-    public Integer getAvailabilityId() {
-        return availabilityId;
+    public AvailabilityDTO getAvailability() {
+        return availability;
     }
 
-    public void setAvailabilityId(Integer availabilityId) {
-        this.availabilityId = availabilityId;
+    public void setAvailability(AvailabilityDTO availability) {
+        this.availability = availability;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public UseriDTO getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(UseriDTO user) {
+        this.user = user;
     }
 
-    @Override
-    public String toString() {
-        return "QuotesDTO{" +
-                "quotesId=" + quotesId +
-                ", reason='" + reason + '\'' +
-                ", typeQuotes='" + typeQuotes + '\'' +
-                ", status=" + status +
-                ", appointmentRequest=" + appointmentRequest +
-                ", appointmentStatusId=" + appointmentStatusId +
-                ", availabilityId=" + availabilityId +
-                ", userId=" + userId +
-                '}';
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }
