@@ -26,10 +26,6 @@ public class Availability implements Serializable {
     private Integer availabilityId;
     @Basic(optional = false)
     @Column(name = "weekday")
-<<<<<<< HEAD
-=======
-
->>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
     private String weekday;
     @Basic(optional = false)
     @Column(name = "start_time")
@@ -60,11 +56,7 @@ public class Availability implements Serializable {
         this.availabilityId = availabilityId;
     }
 
-<<<<<<< HEAD
     public Availability(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, Useri userId, Collection<Quotes> quotesCollection, Collection<AvailabilityOffice> availabilityOfficeCollection) {
-=======
-    public Availability(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status) {
->>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
         this.availabilityId = availabilityId;
         this.weekday = weekday;
         this.startTime = startTime;
@@ -147,31 +139,5 @@ public class Availability implements Serializable {
     public void setAvailabilityOfficeCollection(Collection<AvailabilityOffice> availabilityOfficeCollection) {
         this.availabilityOfficeCollection = availabilityOfficeCollection;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (availabilityId != null ? availabilityId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Availability)) {
-            return false;
-        }
-        Availability other = (Availability) object;
-        if ((this.availabilityId == null && other.availabilityId != null) || (this.availabilityId != null && !this.availabilityId.equals(other.availabilityId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Availability[ availabilityId=" + availabilityId + " ]";
-    }
-
 }
 

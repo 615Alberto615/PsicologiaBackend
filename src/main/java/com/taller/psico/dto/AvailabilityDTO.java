@@ -9,11 +9,9 @@ public class AvailabilityDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer availabilityId;
-<<<<<<< HEAD
+
     private String  weekday;
-=======
-    private String weekday;
->>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
+
     @JsonFormat(pattern="HH:mm:ss")
     private Date startTime;
 
@@ -29,10 +27,7 @@ public class AvailabilityDTO implements Serializable {
 
     // Constructor con todos los campos
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
     public AvailabilityDTO(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, UseriDTO user) {
         this.availabilityId = availabilityId;
         this.weekday = weekday;
@@ -103,7 +98,7 @@ public class AvailabilityDTO implements Serializable {
     public String toString() {
         return "AvailabilityDTO{" +
                 "availabilityId=" + availabilityId +
-                ", weekday=" + weekday +
+                ", weekday='" + weekday + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", codeAvailability=" + codeAvailability +
