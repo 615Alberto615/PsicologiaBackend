@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/quote")
@@ -164,5 +166,24 @@ public class QuoteApi {
             return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del terapeuta: " + e.getMessage()));
         }
     }
+
+
+    @GetMapping("/available-slots/{therapistId}")
+    public ResponseEntity<Map<String, Integer>> getAvailableSlots(@PathVariable int therapistId, @RequestHeader("Authorization") String token) {
+        if (!authBl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            Map<String, Integer> slotsAvailability = quoteBl.countAvailableSlots(therapistId);
+            if (slotsAvailability.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(slotsAvailability);
+        } catch (Exception e) {
+            logger.error("Error calculating available slots: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }

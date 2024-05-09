@@ -12,7 +12,9 @@ import com.taller.psico.repository.AppointmentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -118,7 +120,7 @@ public class QuoteBl {
         dto.setStartTime(availability.getStartTime());
         dto.setEndTime(availability.getEndTime());
         dto.setCodeAvailability(availability.getCodeAvailability());
-        dto.setStatus(availability.getStatus());
+        dto.setStatus(availability.isStatus());
         dto.setUser(convertUseriToUseriDTO(availability.getUserId()));
         return dto;
     }
@@ -168,25 +170,52 @@ public class QuoteBl {
         quote.setStatus(quoteDTO.isStatus());
         quote.setAppointmentRequest(quoteDTO.getAppointmentRequest());
 
-        // Asegurarte de que los objetos y sus IDs no sean null
+        // Asignar disponibilidad
         if (quoteDTO.getAvailability() != null && quoteDTO.getAvailability().getAvailabilityId() != null) {
             Availability availability = availabilityRepository.findById(quoteDTO.getAvailability().getAvailabilityId())
                     .orElseThrow(() -> new RuntimeException("Availability not found"));
             quote.setAvailabilityId(availability);
         }
 
+        // Asignar usuario
         if (quoteDTO.getUser() != null && quoteDTO.getUser().getUserId() != null) {
             Useri user = useriRepository.findById(quoteDTO.getUser().getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             quote.setUserId(user);
+        } else {
+            throw new IllegalArgumentException("User ID is required");
         }
 
+        // Asignar estado de la cita
         AppointmentStatus appointmentStatus = appointmentStatusRepository.findById(quoteDTO.getAppointmentStatusId())
                 .orElseThrow(() -> new RuntimeException("Appointment Status not found"));
         quote.setAppointmentStatusId(appointmentStatus);
+
         quote.setStartTime(quoteDTO.getStartTime());
         quote.setEndTime(quoteDTO.getEndTime());
         return quote;
+    }
+
+
+
+    public Map<String, Integer> countAvailableSlots(int therapistId) {
+        List<Availability> availabilities = availabilityRepository.findByUserIdUserId(therapistId);
+        Map<String, Integer> slotsAvailability = new HashMap<>();
+
+        int totalAvailable = 0;
+        int totalReserved = 0;
+
+        for (Availability availability : availabilities) {
+            // Asumiendo que cada disponibilidad permite un número máximo de 2 citas
+            long countReserved = quotesRepository.countByAvailabilityIdAndStatus(availability.getAvailabilityId(), true);
+            totalReserved += countReserved;
+            int availableSlots = 2 - (int)countReserved; // Calcula los slots disponibles
+            totalAvailable += availableSlots > 0 ? availableSlots : 0; // Asegúrate de no tener slots disponibles negativos
+        }
+
+        slotsAvailability.put("disponible", totalAvailable);
+        slotsAvailability.put("reservado", totalReserved);
+        return slotsAvailability;
     }
 
 }

@@ -9,7 +9,7 @@ public class AvailabilityDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer availabilityId;
-    private Date weekday;
+    private String  weekday;
     @JsonFormat(pattern="HH:mm:ss")
     private Date startTime;
 
@@ -25,7 +25,8 @@ public class AvailabilityDTO implements Serializable {
 
     // Constructor con todos los campos
 
-    public AvailabilityDTO(Integer availabilityId, Date weekday, Date startTime, Date endTime, int codeAvailability, boolean status, UseriDTO user) {
+
+    public AvailabilityDTO(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, UseriDTO user) {
         this.availabilityId = availabilityId;
         this.weekday = weekday;
         this.startTime = startTime;
@@ -43,11 +44,11 @@ public class AvailabilityDTO implements Serializable {
         this.availabilityId = availabilityId;
     }
 
-    public Date getWeekday() {
+    public String getWeekday() {
         return weekday;
     }
 
-    public void setWeekday(Date weekday) {
+    public void setWeekday(String weekday) {
         this.weekday = weekday;
     }
 
