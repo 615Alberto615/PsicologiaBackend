@@ -7,12 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface QuotesRepository extends JpaRepository<Quotes, Integer> {
+
     @Query("SELECT q FROM Quotes q WHERE q.userId = :user")
     List<Quotes> findByUser(Useri user);
 
-    // Corregido para acceder a la propiedad 'availabilityId' dentro del objeto 'Availability' asociado
+    // Fetch all active quotes for a specific availability
     List<Quotes> findByAvailabilityId_AvailabilityIdAndStatus(Integer availabilityId, boolean status);
 
     @Query("SELECT q FROM Quotes q WHERE q.availabilityId.userId.userId = :therapistId")
     List<Quotes> findByTherapistId(int therapistId);
+
+    // Count the number of active quotes for a specific therapist's availability
+    @Query("SELECT count(q) FROM Quotes q WHERE q.availabilityId.availabilityId = :availabilityId AND q.status = :status")
+    long countByAvailabilityIdAndStatus(int availabilityId, boolean status);
+
 }

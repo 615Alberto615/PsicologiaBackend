@@ -75,7 +75,7 @@ public class AvailabilityBl {
                 availability.getStartTime(),
                 availability.getEndTime(),
                 availability.getCodeAvailability(),
-                availability.getStatus(),
+                availability.isStatus(),
                 userDto
         );
     }

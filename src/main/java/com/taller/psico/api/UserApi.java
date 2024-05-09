@@ -2,10 +2,7 @@ package com.taller.psico.api;
 
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.UserBl;
-import com.taller.psico.dto.PaginatedResponseDTO;
-import com.taller.psico.dto.PeopleDTO;
-import com.taller.psico.dto.ResponseDTO;
-import com.taller.psico.dto.UseriDTO;
+import com.taller.psico.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +150,19 @@ public class UserApi {
         }
     }
 
-
+    //Actualizar User por Admin
+    @PutMapping("/updateUser")
+    public ResponseEntity<ResponseDTO<ActualizarUserPorAdminDto>> updateUser(@RequestBody ActualizarUserPorAdminDto actualizarUserPorAdminDto, @RequestHeader("Authorization") String token){
+        userBl.updateUserByAdmin(actualizarUserPorAdminDto);
+        try {
+            if (!authbl.validateToken(token)) {
+                return ResponseEntity.ok(new ResponseDTO<>(401, null, "Token invalido"));
+            }
+            return ResponseEntity.ok(new ResponseDTO<>(200, actualizarUserPorAdminDto, "Usuario actualizado correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ResponseDTO<>(500, null, "Error al actualizar el usuario"));
+        }
+    }
 
 
 

@@ -26,8 +26,7 @@ public class Availability implements Serializable {
     private Integer availabilityId;
     @Basic(optional = false)
     @Column(name = "weekday")
-    @Temporal(TemporalType.DATE)
-    private Date weekday;
+    private String weekday;
     @Basic(optional = false)
     @Column(name = "start_time")
     @Temporal(TemporalType.TIME)
@@ -57,13 +56,16 @@ public class Availability implements Serializable {
         this.availabilityId = availabilityId;
     }
 
-    public Availability(Integer availabilityId, Date weekday, Date startTime, Date endTime, int codeAvailability, boolean status) {
+    public Availability(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, Useri userId, Collection<Quotes> quotesCollection, Collection<AvailabilityOffice> availabilityOfficeCollection) {
         this.availabilityId = availabilityId;
         this.weekday = weekday;
         this.startTime = startTime;
         this.endTime = endTime;
         this.codeAvailability = codeAvailability;
         this.status = status;
+        this.userId = userId;
+        this.quotesCollection = quotesCollection;
+        this.availabilityOfficeCollection = availabilityOfficeCollection;
     }
 
     public Integer getAvailabilityId() {
@@ -74,11 +76,11 @@ public class Availability implements Serializable {
         this.availabilityId = availabilityId;
     }
 
-    public Date getWeekday() {
+    public String getWeekday() {
         return weekday;
     }
 
-    public void setWeekday(Date weekday) {
+    public void setWeekday(String weekday) {
         this.weekday = weekday;
     }
 
@@ -106,7 +108,7 @@ public class Availability implements Serializable {
         this.codeAvailability = codeAvailability;
     }
 
-    public boolean getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
@@ -137,31 +139,5 @@ public class Availability implements Serializable {
     public void setAvailabilityOfficeCollection(Collection<AvailabilityOffice> availabilityOfficeCollection) {
         this.availabilityOfficeCollection = availabilityOfficeCollection;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (availabilityId != null ? availabilityId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Availability)) {
-            return false;
-        }
-        Availability other = (Availability) object;
-        if ((this.availabilityId == null && other.availabilityId != null) || (this.availabilityId != null && !this.availabilityId.equals(other.availabilityId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Availability[ availabilityId=" + availabilityId + " ]";
-    }
-
 }
 
