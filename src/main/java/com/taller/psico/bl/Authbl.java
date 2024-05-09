@@ -124,7 +124,7 @@ public class Authbl {
                 .claim("userId", user.getUserId())
                 .claim("rolId", user.getRolId().getRolId())
                 .setIssuedAt(new Date(currentTimeMillis))
-                .setExpiration(new Date(currentTimeMillis + 3600000)) // 1 hora de validez
+                .setExpiration(new Date(currentTimeMillis + 86400000)) // 1 hora de validez
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }

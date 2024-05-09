@@ -11,4 +11,9 @@ public interface RolRepository extends JpaRepository<Rol, Integer> {
     //Todos los roles
     @Query("SELECT r FROM Rol r")
     public List<Rol> findAllRoles();
+
+    //Devolver el rol por el nombre
+    @Query("SELECT r FROM Rol r WHERE r.rolType = ?1")
+    public Rol findByName(String name);
+
 }

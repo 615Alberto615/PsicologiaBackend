@@ -1,11 +1,14 @@
 package com.taller.psico.bl;
 
+import com.taller.psico.dto.ActualizarUserPorAdminDto;
 import com.taller.psico.dto.PaginatedResponseDTO;
 import com.taller.psico.dto.PeopleDTO;
 import com.taller.psico.dto.UseriDTO;
 import com.taller.psico.entity.People;
+import com.taller.psico.entity.Rol;
 import com.taller.psico.entity.Useri;
 import com.taller.psico.repository.PeopleRepository;
+import com.taller.psico.repository.RolRepository;
 import com.taller.psico.repository.UseriRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,19 @@ public class UserBl {
     private UseriRepository userRepository;
     @Autowired
     private PeopleRepository peopleRepository;
+
+    @Autowired
+    private RolRepository rolRepository;
+
+    //Actualizar un usuario por Admin
+    public void updateUserByAdmin(ActualizarUserPorAdminDto useriDTO){
+        Useri useri = userRepository.findByIdUser(useriDTO.getUserId());
+        useri.setStatus(useriDTO.getStatus());
+        Rol rol = rolRepository.findByName(useriDTO.getRolType());
+        useri.setRolId(rol);
+        userRepository.save(useri);
+    }
+
 
     // Mostrar usuario por id incluyendo detalles de persona
     public UseriDTO findByIdUser(Integer userId){

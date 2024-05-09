@@ -26,6 +26,10 @@ public class Availability implements Serializable {
     private Integer availabilityId;
     @Basic(optional = false)
     @Column(name = "weekday")
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
     private String weekday;
     @Basic(optional = false)
     @Column(name = "start_time")
@@ -56,7 +60,11 @@ public class Availability implements Serializable {
         this.availabilityId = availabilityId;
     }
 
+<<<<<<< HEAD
     public Availability(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, Useri userId, Collection<Quotes> quotesCollection, Collection<AvailabilityOffice> availabilityOfficeCollection) {
+=======
+    public Availability(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status) {
+>>>>>>> 9b315d9952b801374a4d0d1ca54c1140c3be9b3c
         this.availabilityId = availabilityId;
         this.weekday = weekday;
         this.startTime = startTime;
