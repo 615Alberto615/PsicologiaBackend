@@ -2,6 +2,7 @@ package com.taller.psico.bl;
 
 import com.taller.psico.dto.AvailabilityDTO;
 import com.taller.psico.dto.PeopleDTO;
+import com.taller.psico.dto.UserAvailabilitiesDTO;
 import com.taller.psico.dto.UseriDTO;
 import com.taller.psico.entity.Availability;
 import com.taller.psico.entity.People;
@@ -11,6 +12,7 @@ import com.taller.psico.repository.UseriRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,6 +94,22 @@ public class AvailabilityBl {
         } else {
             throw new IllegalStateException("User ID must not be null");
         }
+    }
+
+    public List<UserAvailabilitiesDTO> getAllGroupedByUser() {
+        List<Useri> allUsers = useriRepository.findAll();
+        List<UserAvailabilitiesDTO> grouped = new ArrayList<>();
+
+        for (Useri user : allUsers) {
+            UseriDTO userDTO = convertUseriToUseriDTO(user);
+            List<AvailabilityDTO> availabilities = user.getAvailabilityCollection()
+                    .stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+            grouped.add(new UserAvailabilitiesDTO(userDTO, availabilities));
+        }
+
+        return grouped;
     }
 
     private UseriDTO convertUseriToUseriDTO(Useri user) {

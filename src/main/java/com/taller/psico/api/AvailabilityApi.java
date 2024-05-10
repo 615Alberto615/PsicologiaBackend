@@ -4,6 +4,7 @@ import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.AvailabilityBl;
 import com.taller.psico.dto.AvailabilityDTO;
 import com.taller.psico.dto.ResponseDTO;
+import com.taller.psico.dto.UserAvailabilitiesDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,5 +134,16 @@ public class AvailabilityApi {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, "An error occurred while deleting the availability."));
         }
+    }
+
+    @GetMapping("/grouped-by-user")
+    public ResponseEntity<ResponseDTO<List<UserAvailabilitiesDTO>>> getGroupedByUser(@RequestHeader("Authorization") String token) {
+        if (!authBl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+
+        List<UserAvailabilitiesDTO> groupedAvailabilities = availabilityBl.getAllGroupedByUser();
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), groupedAvailabilities, "Successfully fetched grouped availabilities by user."));
     }
 }

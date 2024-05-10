@@ -51,19 +51,15 @@ public class AuthApi {
     static class RegistrationRequest {
         private UseriDTO userDto;
         private PeopleDTO peopleDto;
-
         public UseriDTO getUserDto() {
             return userDto;
         }
-
         public void setUserDto(UseriDTO userDto) {
             this.userDto = userDto;
         }
-
         public PeopleDTO getPeopleDto() {
             return peopleDto;
         }
-
         public void setPeopleDto(PeopleDTO peopleDto) {
             this.peopleDto = peopleDto;
         }

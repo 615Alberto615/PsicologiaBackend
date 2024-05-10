@@ -38,7 +38,6 @@ public class UserBl {
         userRepository.save(useri);
     }
 
-
     // Mostrar usuario por id incluyendo detalles de persona
     public UseriDTO findByIdUser(Integer userId){
         Useri useri = userRepository.findByIdUser(userId);
@@ -68,7 +67,6 @@ public class UserBl {
         people.setCi(peopleDTO.getCi());
         userRepository.save(useri);
     }
-
 
     //Mostrar persona por id de usuario
     public PeopleDTO findByIdPerson(Integer userId){
@@ -116,8 +114,6 @@ public class UserBl {
                 .collect(Collectors.toList());
     }
 
-
-
     private UseriDTO convertToUseriDTO(Useri user) {
         // Crear instancia de UseriDTO
         UseriDTO dto = new UseriDTO();
@@ -125,13 +121,11 @@ public class UserBl {
         dto.setUserName(user.getUserName());
         dto.setStatus(user.getStatus());
         dto.setRolId(user.getRolId().getRolId());
-
         // Convertir People a PeopleDTO si People no es null
         if (user.getPeopleId() != null) {
             PeopleDTO peopleDTO = convertToPeopleDTO(user.getPeopleId());
             dto.setPeople(peopleDTO);
         }
-
         return dto;
     }
 
@@ -149,7 +143,5 @@ public class UserBl {
         dto.setStatus(people.getStatus());
         return dto;
     }
-
-
 
 }
