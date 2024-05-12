@@ -1,9 +1,7 @@
 package com.taller.psico.bl;
 
-import com.taller.psico.dto.ActualizarUserPorAdminDto;
-import com.taller.psico.dto.PaginatedResponseDTO;
-import com.taller.psico.dto.PeopleDTO;
-import com.taller.psico.dto.UseriDTO;
+import com.taller.psico.dto.*;
+import com.taller.psico.entity.Domains;
 import com.taller.psico.entity.People;
 import com.taller.psico.entity.Rol;
 import com.taller.psico.entity.Useri;
@@ -38,14 +36,13 @@ public class UserBl {
         userRepository.save(useri);
     }
 
-
     // Mostrar usuario por id incluyendo detalles de persona
-    public UseriDTO findByIdUser(Integer userId){
+    public UseriObtenerDTO findByIdUser(Integer userId){
         Useri useri = userRepository.findByIdUser(userId);
         People people = useri.getPeopleId();  // Asume que getPeopleId() devuelve un objeto People
-        PeopleDTO peopleDTO = convertToPeopleDTO(people);  // Convierte People a PeopleDTO
+        PeopleObtenerDTO peopleDTO = convertToPeopleObtenerDTO(people);  // Convierte People a PeopleDTO
 
-        UseriDTO useriDTO = new UseriDTO();
+        UseriObtenerDTO useriDTO = new UseriObtenerDTO();
         useriDTO.setUserId(useri.getUserId());
         useriDTO.setUserName(useri.getUserName());
         useriDTO.setStatus(useri.getStatus());
@@ -69,10 +66,9 @@ public class UserBl {
         userRepository.save(useri);
     }
 
-
     //Mostrar persona por id de usuario
-    public PeopleDTO findByIdPerson(Integer userId){
-        PeopleDTO peopleDTO = new PeopleDTO();
+    public PeopleObtenerDTO findByIdPerson(Integer userId){
+        PeopleObtenerDTO peopleDTO = new PeopleObtenerDTO();
         Useri useri = userRepository.findByIdUser(userId);
         People people = useri.getPeopleId();
         peopleDTO.setPeopleId(people.getPeopleId());
@@ -84,6 +80,12 @@ public class UserBl {
         peopleDTO.setCellphone(people.getCellphone());
         peopleDTO.setAddress(people.getAddress());
         peopleDTO.setCi(people.getCi());
+        DomainsDTO genderDTO = convertToDomainsDTO(people.getGenderId());
+        peopleDTO.setGenderId(genderDTO);
+        DomainsDTO occupationDTO = convertToDomainsDTO(people.getOccupationId());
+        peopleDTO.setOccupationId(occupationDTO);
+        DomainsDTO semesterDTO = convertToDomainsDTO(people.getSemesterId());
+        peopleDTO.setSemesterId(semesterDTO);
         return peopleDTO;
     }
 
@@ -97,9 +99,9 @@ public class UserBl {
         return false;
     }
 
-    public List<UseriDTO> getAllUsers() {
+    public List<UseriObtenerDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(this::convertToUseriDTO)
+                .map(this::convertToUseriObtenerDTO)
                 .collect(Collectors.toList());
     }
 
@@ -116,8 +118,6 @@ public class UserBl {
                 .collect(Collectors.toList());
     }
 
-
-
     private UseriDTO convertToUseriDTO(Useri user) {
         // Crear instancia de UseriDTO
         UseriDTO dto = new UseriDTO();
@@ -125,13 +125,52 @@ public class UserBl {
         dto.setUserName(user.getUserName());
         dto.setStatus(user.getStatus());
         dto.setRolId(user.getRolId().getRolId());
-
         // Convertir People a PeopleDTO si People no es null
         if (user.getPeopleId() != null) {
             PeopleDTO peopleDTO = convertToPeopleDTO(user.getPeopleId());
             dto.setPeople(peopleDTO);
         }
+        return dto;
+    }
 
+    private UseriObtenerDTO convertToUseriObtenerDTO(Useri user) {
+        UseriObtenerDTO dto = new UseriObtenerDTO();
+        dto.setUserId(user.getUserId());
+        dto.setUserName(user.getUserName());
+        dto.setStatus(user.getStatus());
+        dto.setRolId(user.getRolId().getRolId());
+        PeopleObtenerDTO peopleDTO = convertToPeopleObtenerDTO(user.getPeopleId());
+        dto.setPeople(peopleDTO);
+        return dto;
+    }
+
+    private PeopleObtenerDTO convertToPeopleObtenerDTO(People people) {
+        PeopleObtenerDTO dto = new PeopleObtenerDTO();
+        dto.setPeopleId(people.getPeopleId());
+        dto.setName(people.getName());
+        dto.setFirstLastname(people.getFirstLastname());
+        dto.setSecondLastname(people.getSecondLastname());
+        dto.setEmail(people.getEmail());
+        dto.setAge(people.getAge());
+        dto.setCellphone(people.getCellphone());
+        dto.setAddress(people.getAddress());
+        dto.setCi(people.getCi());
+        dto.setStatus(people.getStatus());
+        DomainsDTO genderDTO = convertToDomainsDTO(people.getGenderId());
+        dto.setGenderId(genderDTO);
+        DomainsDTO occupationDTO = convertToDomainsDTO(people.getOccupationId());
+        dto.setOccupationId(occupationDTO);
+        DomainsDTO semesterDTO = convertToDomainsDTO(people.getSemesterId());
+        dto.setSemesterId(semesterDTO);
+        return dto;
+    }
+
+    private DomainsDTO convertToDomainsDTO(Domains domains) {
+        DomainsDTO dto = new DomainsDTO();
+        dto.setDomainsId(domains.getDomainsId());
+        dto.setType(domains.getType());
+        dto.setName(domains.getName());
+        dto.setDescription(domains.getDescription());
         return dto;
     }
 
@@ -149,7 +188,5 @@ public class UserBl {
         dto.setStatus(people.getStatus());
         return dto;
     }
-
-
 
 }

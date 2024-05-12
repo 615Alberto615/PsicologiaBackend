@@ -28,8 +28,8 @@ public class UserApi {
 
     //Mostrar usuario por id
     @GetMapping("/find/{userId}")
-    public ResponseEntity<ResponseDTO<UseriDTO>> findByIdUser(@PathVariable Integer userId, @RequestHeader("Authorization") String token){
-        UseriDTO useriDTO = userBl.findByIdUser(userId);
+    public ResponseEntity<ResponseDTO<UseriObtenerDTO>> findByIdUser(@PathVariable Integer userId, @RequestHeader("Authorization") String token){
+        UseriObtenerDTO useriDTO = userBl.findByIdUser(userId);
         try {
             if (!authbl.validateToken(token)) {
                 return ResponseEntity.ok(new ResponseDTO<>(401, null, "Token invalido"));
@@ -42,8 +42,8 @@ public class UserApi {
 
     //Mostrar persona por id de usuario
     @GetMapping("/findPerson/{userId}")
-    public ResponseEntity<ResponseDTO<PeopleDTO>> findByIdPerson(@PathVariable Integer userId, @RequestHeader("Authorization") String token){
-        PeopleDTO peopleDTO = userBl.findByIdPerson(userId);
+    public ResponseEntity<ResponseDTO<PeopleObtenerDTO>> findByIdPerson(@PathVariable Integer userId, @RequestHeader("Authorization") String token){
+        PeopleObtenerDTO peopleDTO = userBl.findByIdPerson(userId);
         try {
             if (!authbl.validateToken(token)) {
                 return ResponseEntity.ok(new ResponseDTO<>(401, null, "Token invalido"));
@@ -94,7 +94,7 @@ public class UserApi {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseDTO<List<UseriDTO>>> getAllUsers(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseDTO<List<UseriObtenerDTO>>> getAllUsers(@RequestHeader("Authorization") String token) {
         logger.info("Request received to fetch all users.");
 
         if (!authbl.validateToken(token)) {
@@ -103,7 +103,7 @@ public class UserApi {
         }
 
         try {
-            List<UseriDTO> users = userBl.getAllUsers();
+            List<UseriObtenerDTO> users = userBl.getAllUsers();
             logger.info("Successfully fetched all users. Number of users: {}", users.size());
             return ResponseEntity.ok(new ResponseDTO<>(200, users, "Users fetched successfully."));
         } catch (Exception e) {
