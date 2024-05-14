@@ -271,4 +271,32 @@ public class QuoteBl {
         return slotsAvailability;
     }
 
+    public Map<String, Object> getDashboardCounts() {
+        List<Quotes> allQuotes = quotesRepository.findAll();
+        Map<String, Integer> genderCounts = new HashMap<>();
+        Map<String, Integer> occupationCounts = new HashMap<>();
+        Map<String, Integer> semesterCounts = new HashMap<>();
+
+        for (Quotes quote : allQuotes) {
+            People people = quote.getUserId().getPeopleId();  // Actualizado para usar getUser()
+            incrementCount(genderCounts, people.getGenderId().getName());
+            incrementCount(occupationCounts, people.getOccupationId().getName());
+            incrementCount(semesterCounts, people.getSemesterId().getName());
+        }
+
+        Map<String, Object> dashboardCounts = new HashMap<>();
+        dashboardCounts.put("GenderCounts", genderCounts);
+        dashboardCounts.put("OccupationCounts", occupationCounts);
+        dashboardCounts.put("SemesterCounts", semesterCounts);
+        return dashboardCounts;
+    }
+
+
+    private void incrementCount(Map<String, Integer> map, String key) {
+        if (key != null) {
+            map.put(key, map.getOrDefault(key, 0) + 1);
+        }
+    }
+
+
 }

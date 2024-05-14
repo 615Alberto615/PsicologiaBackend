@@ -186,5 +186,20 @@ public class QuoteApi {
         }
     }
 
+    @GetMapping("/dashboard-counts")
+    public ResponseEntity<Map<String, Object>> getDashboardCounts(@RequestHeader("Authorization") String token) {
+        if (!authBl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            Map<String, Object> dashboardCounts = quoteBl.getDashboardCounts();
+            return ResponseEntity.ok(dashboardCounts);
+        } catch (Exception e) {
+            logger.error("Error while fetching dashboard counts: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 
 }
