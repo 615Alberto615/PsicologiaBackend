@@ -1,9 +1,6 @@
 package com.taller.psico.bl;
 
-import com.taller.psico.dto.AvailabilityDTO;
-import com.taller.psico.dto.PeopleDTO;
-import com.taller.psico.dto.QuotesDTO;
-import com.taller.psico.dto.UseriDTO;
+import com.taller.psico.dto.*;
 import com.taller.psico.entity.*;
 import com.taller.psico.repository.AvailabilityRepotisory;
 import com.taller.psico.repository.QuotesRepository;
@@ -48,9 +45,9 @@ public class QuoteBl {
     }
 
     // Get all quotes
-    public List<QuotesDTO> getAllQuotes() {
+    public List<QuotesObtenerDTO> getAllQuotes() {
         List<Quotes> quotes = quotesRepository.findAll();
-        return quotes.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
     }
 
     // Get user specific quotes
@@ -107,6 +104,62 @@ public class QuoteBl {
         dto.setUser(convertUseriToUseriDTO(quote.getUserId()));
         dto.setStartTime(quote.getStartTime());
         dto.setEndTime(quote.getEndTime());
+        return dto;
+    }
+
+    private QuotesObtenerDTO convertToQuotesDTO(Quotes quote) {
+        QuotesObtenerDTO dto = new QuotesObtenerDTO();
+        dto.setQuotesId(quote.getQuotesId());
+        dto.setReason(quote.getReason());
+        dto.setTypeQuotes(quote.getTypeQuotes());
+        dto.setStatus(quote.isStatus());
+        dto.setAppointmentRequest(quote.getAppointmentRequest());
+        dto.setAppointmentStatusId(quote.getAppointmentStatusId().getAppointmentStatusId());
+        dto.setAvailability(convertAvailabilityToDTO(quote.getAvailabilityId()));
+        dto.setUser(convertToUseriObtenerDTO(quote.getUserId()));
+        dto.setStartTime(quote.getStartTime());
+        dto.setEndTime(quote.getEndTime());
+        return dto;
+    }
+
+    private UseriObtenerDTO convertToUseriObtenerDTO(Useri user) {
+        UseriObtenerDTO dto = new UseriObtenerDTO();
+        dto.setUserId(user.getUserId());
+        dto.setUserName(user.getUserName());
+        dto.setStatus(user.getStatus());
+        dto.setRolId(user.getRolId().getRolId());
+        PeopleObtenerDTO peopleDTO = convertToPeopleObtenerDTO(user.getPeopleId());
+        dto.setPeople(peopleDTO);
+        return dto;
+    }
+
+    private PeopleObtenerDTO convertToPeopleObtenerDTO(People people) {
+        PeopleObtenerDTO dto = new PeopleObtenerDTO();
+        dto.setPeopleId(people.getPeopleId());
+        dto.setName(people.getName());
+        dto.setFirstLastname(people.getFirstLastname());
+        dto.setSecondLastname(people.getSecondLastname());
+        dto.setEmail(people.getEmail());
+        dto.setAge(people.getAge());
+        dto.setCellphone(people.getCellphone());
+        dto.setAddress(people.getAddress());
+        dto.setCi(people.getCi());
+        dto.setStatus(people.getStatus());
+        DomainsDTO genderDTO = convertToDomainsDTO(people.getGenderId());
+        dto.setGenderId(genderDTO);
+        DomainsDTO occupationDTO = convertToDomainsDTO(people.getOccupationId());
+        dto.setOccupationId(occupationDTO);
+        DomainsDTO semesterDTO = convertToDomainsDTO(people.getSemesterId());
+        dto.setSemesterId(semesterDTO);
+        return dto;
+    }
+
+    private DomainsDTO convertToDomainsDTO(Domains domains) {
+        DomainsDTO dto = new DomainsDTO();
+        dto.setDomainsId(domains.getDomainsId());
+        dto.setType(domains.getType());
+        dto.setName(domains.getName());
+        dto.setDescription(domains.getDescription());
         return dto;
     }
 

@@ -3,6 +3,7 @@ package com.taller.psico.api;
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.QuoteBl;
 import com.taller.psico.dto.QuotesDTO;
+import com.taller.psico.dto.QuotesObtenerDTO;
 import com.taller.psico.dto.ResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,14 +52,14 @@ public class QuoteApi {
 
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getAllQuotes(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getAllQuotes(@RequestHeader("Authorization") String token) {
         logger.info("Fetching all quotes");
         if (!authBl.validateToken(token)) {
             logger.error("Invalid token provided for fetching quotes.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
         }
         try {
-            List<QuotesDTO> quotes = quoteBl.getAllQuotes();
+            List<QuotesObtenerDTO> quotes = quoteBl.getAllQuotes();
             logger.info("All quotes retrieved successfully");
             return ResponseEntity.ok(new ResponseDTO<>(200, quotes, "Todas las citas recuperadas exitosamente."));
         } catch (Exception e) {
