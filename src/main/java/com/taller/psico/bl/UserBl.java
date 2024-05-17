@@ -28,13 +28,21 @@ public class UserBl {
     private RolRepository rolRepository;
 
     //Actualizar un usuario por Admin
-    public void updateUserByAdmin(ActualizarUserPorAdminDto useriDTO){
-        Useri useri = userRepository.findByIdUser(useriDTO.getUserId());
-        useri.setStatus(useriDTO.getStatus());
-        Rol rol = rolRepository.findByName(useriDTO.getRolType());
-        useri.setRolId(rol);
-        userRepository.save(useri);
+    public void updateUserRole(Integer userId, Integer rolId) {
+        Useri user = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+        Rol rol = rolRepository.findById(rolId).orElseThrow(() -> new IllegalStateException("Rol no encontrado"));
+        user.setRolId(rol);
+        userRepository.save(user);
     }
+
+    // actualizar status de rol
+    public void updateUserStatus(Integer userId, Boolean status) {
+        Useri user = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+        user.setStatus(status);
+        userRepository.save(user);
+    }
+
+
 
     // Mostrar usuario por id incluyendo detalles de persona
     public UseriObtenerDTO findByIdUser(Integer userId){
