@@ -2,7 +2,9 @@ package com.taller.psico.api;
 
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.QuoteBl;
+import com.taller.psico.dto.IsAvailableDTO;
 import com.taller.psico.dto.QuotesDTO;
+import com.taller.psico.dto.QuotesObtenerDTO;
 import com.taller.psico.dto.ResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +52,33 @@ public class QuoteApi {
         }
     }
 
+    //Decir un un availability esta disponible por fecha de quote y id de availability
+    @PostMapping("/is-available")
+    public ResponseEntity<ResponseDTO<Boolean>> isAvailable(@RequestBody IsAvailableDTO isAvailableDTO, @RequestHeader("Authorization") String token) {
+        logger.info("Checking if availability is available for quote");
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for checking availability.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            boolean isAvailable = quoteBl.isAvailable(isAvailableDTO);
+            return ResponseEntity.ok(new ResponseDTO<>(200, isAvailable, "Disponibilidad verificada exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while checking availability for quote: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al verificar disponibilidad para cita: " + e.getMessage()));
+        }
+    }
+
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getAllQuotes(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getAllQuotes(@RequestHeader("Authorization") String token) {
         logger.info("Fetching all quotes");
         if (!authBl.validateToken(token)) {
             logger.error("Invalid token provided for fetching quotes.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
         }
         try {
-            List<QuotesDTO> quotes = quoteBl.getAllQuotes();
+            List<QuotesObtenerDTO> quotes = quoteBl.getAllQuotes();
             logger.info("All quotes retrieved successfully");
             return ResponseEntity.ok(new ResponseDTO<>(200, quotes, "Todas las citas recuperadas exitosamente."));
         } catch (Exception e) {
@@ -185,6 +204,21 @@ public class QuoteApi {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/dashboard-counts")
+    public ResponseEntity<Map<String, Object>> getDashboardCounts(@RequestHeader("Authorization") String token) {
+        if (!authBl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            Map<String, Object> dashboardCounts = quoteBl.getDashboardCounts();
+            return ResponseEntity.ok(dashboardCounts);
+        } catch (Exception e) {
+            logger.error("Error while fetching dashboard counts: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 
 }

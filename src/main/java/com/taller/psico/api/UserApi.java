@@ -151,18 +151,35 @@ public class UserApi {
     }
 
     //Actualizar User por Admin
-    @PutMapping("/updateUser")
-    public ResponseEntity<ResponseDTO<ActualizarUserPorAdminDto>> updateUser(@RequestBody ActualizarUserPorAdminDto actualizarUserPorAdminDto, @RequestHeader("Authorization") String token){
-        userBl.updateUserByAdmin(actualizarUserPorAdminDto);
+    @PutMapping("/changeRole/{userId}")
+    public ResponseEntity<ResponseDTO<Void>> changeUserRole(@PathVariable Integer userId, @RequestBody UpdateRoleDTO updateRoleDTO, @RequestHeader("Authorization") String token) {
+        if (!authbl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
         try {
-            if (!authbl.validateToken(token)) {
-                return ResponseEntity.ok(new ResponseDTO<>(401, null, "Token invalido"));
-            }
-            return ResponseEntity.ok(new ResponseDTO<>(200, actualizarUserPorAdminDto, "Usuario actualizado correctamente"));
+            userBl.updateUserRole(userId, updateRoleDTO.getRolId());
+            return ResponseEntity.ok(new ResponseDTO<>(200, null, "Rol actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new ResponseDTO<>(500, null, "Error al actualizar el usuario"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO<>(500, null, "Error al actualizar el rol: " + e.getMessage()));
         }
     }
+
+    // cambiar status
+    @PutMapping("/changeStatus/{userId}")
+    public ResponseEntity<ResponseDTO<Void>> changeUserStatus(@PathVariable Integer userId, @RequestBody UpdateStatusDTO updateStatusDTO, @RequestHeader("Authorization") String token) {
+        if (!authbl.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
+        }
+        try {
+            userBl.updateUserStatus(userId, updateStatusDTO.getStatus());
+            return ResponseEntity.ok(new ResponseDTO<>(200, null, "Estado actualizado correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDTO<>(500, null, "Error al actualizar el estado: " + e.getMessage()));
+        }
+    }
+
+
+
 
 
 

@@ -1,9 +1,6 @@
 package com.taller.psico.bl;
 
-import com.taller.psico.dto.AvailabilityDTO;
-import com.taller.psico.dto.PeopleDTO;
-import com.taller.psico.dto.QuotesDTO;
-import com.taller.psico.dto.UseriDTO;
+import com.taller.psico.dto.*;
 import com.taller.psico.entity.*;
 import com.taller.psico.repository.AvailabilityRepotisory;
 import com.taller.psico.repository.QuotesRepository;
@@ -37,20 +34,33 @@ public class QuoteBl {
         Availability availability = availabilityRepository.findById(quoteDTO.getAvailability().getAvailabilityId())
                 .orElseThrow(() -> new RuntimeException("Availability not found"));
 
-        List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
+        /*List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
         if (existingQuotes.size() < 2) {
             Quotes quote = convertToEntity(new Quotes(), quoteDTO);
             Quotes savedQuote = quotesRepository.save(quote);
             return convertToDTO(savedQuote);
         } else {
             throw new Exception("No more slots available for this time.");
+        }*/
+        Quotes quote = convertToEntity(new Quotes(), quoteDTO);
+        Quotes savedQuote = quotesRepository.save(quote);
+        return convertToDTO(savedQuote);
+    }
+
+    //Mostrar si esta disponible una avalability por id y fecha de cita
+    public Boolean isAvailable(IsAvailableDTO isAvailableDTO) {
+        List<Quotes> quotes = quotesRepository.findByAvailabilityIdAndDate(isAvailableDTO.getAvailabilityId(), isAvailableDTO.getStartTime());
+        if (quotes.size() < 2) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     // Get all quotes
-    public List<QuotesDTO> getAllQuotes() {
+    public List<QuotesObtenerDTO> getAllQuotes() {
         List<Quotes> quotes = quotesRepository.findAll();
-        return quotes.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
     }
 
     // Get user specific quotes
@@ -107,6 +117,62 @@ public class QuoteBl {
         dto.setUser(convertUseriToUseriDTO(quote.getUserId()));
         dto.setStartTime(quote.getStartTime());
         dto.setEndTime(quote.getEndTime());
+        return dto;
+    }
+
+    private QuotesObtenerDTO convertToQuotesDTO(Quotes quote) {
+        QuotesObtenerDTO dto = new QuotesObtenerDTO();
+        dto.setQuotesId(quote.getQuotesId());
+        dto.setReason(quote.getReason());
+        dto.setTypeQuotes(quote.getTypeQuotes());
+        dto.setStatus(quote.isStatus());
+        dto.setAppointmentRequest(quote.getAppointmentRequest());
+        dto.setAppointmentStatusId(quote.getAppointmentStatusId().getAppointmentStatusId());
+        dto.setAvailability(convertAvailabilityToDTO(quote.getAvailabilityId()));
+        dto.setUser(convertToUseriObtenerDTO(quote.getUserId()));
+        dto.setStartTime(quote.getStartTime());
+        dto.setEndTime(quote.getEndTime());
+        return dto;
+    }
+
+    private UseriObtenerDTO convertToUseriObtenerDTO(Useri user) {
+        UseriObtenerDTO dto = new UseriObtenerDTO();
+        dto.setUserId(user.getUserId());
+        dto.setUserName(user.getUserName());
+        dto.setStatus(user.getStatus());
+        dto.setRolId(user.getRolId().getRolId());
+        PeopleObtenerDTO peopleDTO = convertToPeopleObtenerDTO(user.getPeopleId());
+        dto.setPeople(peopleDTO);
+        return dto;
+    }
+
+    private PeopleObtenerDTO convertToPeopleObtenerDTO(People people) {
+        PeopleObtenerDTO dto = new PeopleObtenerDTO();
+        dto.setPeopleId(people.getPeopleId());
+        dto.setName(people.getName());
+        dto.setFirstLastname(people.getFirstLastname());
+        dto.setSecondLastname(people.getSecondLastname());
+        dto.setEmail(people.getEmail());
+        dto.setAge(people.getAge());
+        dto.setCellphone(people.getCellphone());
+        dto.setAddress(people.getAddress());
+        dto.setCi(people.getCi());
+        dto.setStatus(people.getStatus());
+        DomainsDTO genderDTO = convertToDomainsDTO(people.getGenderId());
+        dto.setGenderId(genderDTO);
+        DomainsDTO occupationDTO = convertToDomainsDTO(people.getOccupationId());
+        dto.setOccupationId(occupationDTO);
+        DomainsDTO semesterDTO = convertToDomainsDTO(people.getSemesterId());
+        dto.setSemesterId(semesterDTO);
+        return dto;
+    }
+
+    private DomainsDTO convertToDomainsDTO(Domains domains) {
+        DomainsDTO dto = new DomainsDTO();
+        dto.setDomainsId(domains.getDomainsId());
+        dto.setType(domains.getType());
+        dto.setName(domains.getName());
+        dto.setDescription(domains.getDescription());
         return dto;
     }
 
@@ -217,5 +283,33 @@ public class QuoteBl {
         slotsAvailability.put("reservado", totalReserved);
         return slotsAvailability;
     }
+
+    public Map<String, Object> getDashboardCounts() {
+        List<Quotes> allQuotes = quotesRepository.findAll();
+        Map<String, Integer> genderCounts = new HashMap<>();
+        Map<String, Integer> occupationCounts = new HashMap<>();
+        Map<String, Integer> semesterCounts = new HashMap<>();
+
+        for (Quotes quote : allQuotes) {
+            People people = quote.getUserId().getPeopleId();  // Actualizado para usar getUser()
+            incrementCount(genderCounts, people.getGenderId().getName());
+            incrementCount(occupationCounts, people.getOccupationId().getName());
+            incrementCount(semesterCounts, people.getSemesterId().getName());
+        }
+
+        Map<String, Object> dashboardCounts = new HashMap<>();
+        dashboardCounts.put("GenderCounts", genderCounts);
+        dashboardCounts.put("OccupationCounts", occupationCounts);
+        dashboardCounts.put("SemesterCounts", semesterCounts);
+        return dashboardCounts;
+    }
+
+
+    private void incrementCount(Map<String, Integer> map, String key) {
+        if (key != null) {
+            map.put(key, map.getOrDefault(key, 0) + 1);
+        }
+    }
+
 
 }
