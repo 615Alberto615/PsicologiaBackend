@@ -2,6 +2,7 @@ package com.taller.psico.api;
 
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.QuoteBl;
+import com.taller.psico.dto.IsAvailableDTO;
 import com.taller.psico.dto.QuotesDTO;
 import com.taller.psico.dto.QuotesObtenerDTO;
 import com.taller.psico.dto.ResponseDTO;
@@ -47,6 +48,23 @@ public class QuoteApi {
         } catch (Exception e) {
             logger.error("Error while creating quote: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al crear cita: " + e.getMessage()));
+        }
+    }
+
+    //Decir un un availability esta disponible por fecha de quote y id de availability
+    @PostMapping("/is-available")
+    public ResponseEntity<ResponseDTO<Boolean>> isAvailable(@RequestBody IsAvailableDTO isAvailableDTO, @RequestHeader("Authorization") String token) {
+        logger.info("Checking if availability is available for quote");
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for checking availability.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            boolean isAvailable = quoteBl.isAvailable(isAvailableDTO);
+            return ResponseEntity.ok(new ResponseDTO<>(200, isAvailable, "Disponibilidad verificada exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while checking availability for quote: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al verificar disponibilidad para cita: " + e.getMessage()));
         }
     }
 

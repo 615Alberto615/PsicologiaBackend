@@ -34,13 +34,26 @@ public class QuoteBl {
         Availability availability = availabilityRepository.findById(quoteDTO.getAvailability().getAvailabilityId())
                 .orElseThrow(() -> new RuntimeException("Availability not found"));
 
-        List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
+        /*List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
         if (existingQuotes.size() < 2) {
             Quotes quote = convertToEntity(new Quotes(), quoteDTO);
             Quotes savedQuote = quotesRepository.save(quote);
             return convertToDTO(savedQuote);
         } else {
             throw new Exception("No more slots available for this time.");
+        }*/
+        Quotes quote = convertToEntity(new Quotes(), quoteDTO);
+        Quotes savedQuote = quotesRepository.save(quote);
+        return convertToDTO(savedQuote);
+    }
+
+    //Mostrar si esta disponible una avalability por id y fecha de cita
+    public Boolean isAvailable(IsAvailableDTO isAvailableDTO) {
+        List<Quotes> quotes = quotesRepository.findByAvailabilityIdAndDate(isAvailableDTO.getAvailabilityId(), isAvailableDTO.getStartTime());
+        if (quotes.size() < 2) {
+            return true;
+        } else {
+            return false;
         }
     }
 
