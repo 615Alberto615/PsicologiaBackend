@@ -9,6 +9,9 @@ import com.taller.psico.repository.AppointmentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,20 @@ public class QuoteBl {
     public List<QuotesObtenerDTO> getAllQuotes() {
         List<Quotes> quotes = quotesRepository.findAll();
         return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+    }
+
+    //Mostrar todas citas hasta la fecha de hoy de un usuario o docente
+    public List<QuotesObtenerDTO> getAllQuotesByDateToday(int usuario, Integer userId) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate formattedDate = LocalDate.parse(today.format(formatter));
+        if (usuario == 1) {
+            List<Quotes> quotes = quotesRepository.findByUserId(usuario, formattedDate);
+            return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+        } else {
+            List<Quotes> quotes = quotesRepository.findByTherapistId(usuario, formattedDate);
+            return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+        }
     }
 
     // Get user specific quotes

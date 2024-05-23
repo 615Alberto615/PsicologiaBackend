@@ -218,6 +218,42 @@ public class QuoteApi {
         }
     }
 
+    // Obtener todas las cita hasta la fecha de hoy de un usuario
+    @GetMapping("/user/{userId}/today")
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getUserQuotesToday(@PathVariable int userId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for user with ID: {} until today", userId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching user quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesObtenerDTO> userQuotes = quoteBl.getAllQuotesByDateToday(1,userId);
+            logger.info("Quotes for user ID {} retrieved successfully", userId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, userQuotes, "Citas del usuario recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for user ID {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del usuario: " + e.getMessage()));
+        }
+    }
+
+    // Obtener todas las cita hasta la fecha de hoy de un terapeuta
+    @GetMapping("/therapist/{therapistId}/today")
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getTherapistQuotesToday(@PathVariable int therapistId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for therapist with ID: {} until today", therapistId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching therapist quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesObtenerDTO> therapistQuotes = quoteBl.getAllQuotesByDateToday(2,therapistId);
+            logger.info("Quotes for therapist ID {} retrieved successfully", therapistId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, therapistQuotes, "Citas del terapeuta recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for therapist ID {}: {}", therapistId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del terapeuta: " + e.getMessage()));
+        }
+    }
+
 
 
 }
