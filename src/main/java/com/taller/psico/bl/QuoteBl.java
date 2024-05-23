@@ -9,6 +9,7 @@ import com.taller.psico.repository.AppointmentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -71,11 +72,13 @@ public class QuoteBl {
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate formattedDate = LocalDate.parse(today.format(formatter));
+        Timestamp timestamp = Timestamp.valueOf(formattedDate.atStartOfDay());
+
         if (usuario == 1) {
-            List<Quotes> quotes = quotesRepository.findByUserId(usuario, formattedDate);
+            List<Quotes> quotes = quotesRepository.findByUserId(usuario, timestamp);
             return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
         } else {
-            List<Quotes> quotes = quotesRepository.findByTherapistId(usuario, formattedDate);
+            List<Quotes> quotes = quotesRepository.findByTherapistId(usuario, timestamp);
             return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
         }
     }

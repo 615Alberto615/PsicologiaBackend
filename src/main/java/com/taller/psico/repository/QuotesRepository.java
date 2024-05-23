@@ -5,6 +5,7 @@ import com.taller.psico.entity.Useri;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +35,10 @@ public interface QuotesRepository extends JpaRepository<Quotes, Integer> {
 
     //Todas las citas de un usuario hasta la fecha de hoy
     @Query("SELECT q FROM Quotes q WHERE q.userId.userId = :userId AND q.startTime <= :fecha")
-    List<Quotes> findByUserId(int userId, LocalDate fecha);
+    List<Quotes> findByUserId(int userId, Timestamp fecha);
 
     //Todas las citas de un docente hasta la fecha de hoy
     @Query("SELECT q FROM Quotes q WHERE q.availabilityId.userId.userId = :therapistId AND q.startTime <= :fecha")
-    List<Quotes> findByTherapistId(int therapistId, LocalDate fecha);
+    List<Quotes> findByTherapistId(int therapistId, Timestamp fecha);
 
 }
