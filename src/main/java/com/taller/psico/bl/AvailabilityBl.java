@@ -59,6 +59,14 @@ public class AvailabilityBl {
                 .orElse(null);
     }
 
+    public List<AvailabilityDTO> getActiveAvailabilities() {
+        return availabilityRepository.findByStatus(true).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
     public void deleteAvailabilityLogically(int availabilityId) {
         Availability availability = availabilityRepository.findById(availabilityId).orElse(null);
         if (availability != null) {

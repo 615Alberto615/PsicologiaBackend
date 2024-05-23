@@ -3,6 +3,8 @@ package com.taller.psico.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class AvailabilityDTO implements Serializable {
@@ -10,13 +12,14 @@ public class AvailabilityDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer availabilityId;
 
-    private String  weekday;
+    private String weekday;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern="HH:mm:ss", timezone = "America/La_Paz")
     private Date startTime;
 
-    @JsonFormat(pattern="HH:mm:ss")
+    @JsonFormat(pattern="HH:mm:ss", timezone = "America/La_Paz")
     private Date endTime;
+
     private int codeAvailability;
     private boolean status;
     private UseriDTO user; // Sólo el ID del usuario asociado
@@ -26,8 +29,6 @@ public class AvailabilityDTO implements Serializable {
     }
 
     // Constructor con todos los campos
-
-
     public AvailabilityDTO(Integer availabilityId, String weekday, Date startTime, Date endTime, int codeAvailability, boolean status, UseriDTO user) {
         this.availabilityId = availabilityId;
         this.weekday = weekday;
@@ -37,6 +38,8 @@ public class AvailabilityDTO implements Serializable {
         this.status = status;
         this.user = user;
     }
+
+    // Getters y Setters
 
     public Integer getAvailabilityId() {
         return availabilityId;
@@ -104,6 +107,6 @@ public class AvailabilityDTO implements Serializable {
                 ", codeAvailability=" + codeAvailability +
                 ", status=" + status +
                 ", user=" + user +
-                '}';
+            '}';
     }
 }
