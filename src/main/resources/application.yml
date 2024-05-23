@@ -7,7 +7,7 @@ spring:
   datasource:
     type: org.postgresql.jdbc2.optional.SimpleDataSource
     username: ${POSTGRES_USERNAME:postgres}
-    password: ${POSTGRES_PASSWORD:password}
+    password: ${POSTGRES_PASSWORD:postgres}
     url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PsicoDB}
   jpa:
     hibernate:

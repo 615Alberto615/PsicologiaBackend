@@ -108,11 +108,20 @@ public class QuoteBl {
     }
 
     // Soft delete a quote by setting its status to false
-    public boolean deleteQuote(int quotesId) {
+/*
+*   public boolean deleteQuote(int quotesId) {
         return quotesRepository.findById(quotesId)
                 .map(quote -> {
                     quote.setStatus(false);
                     quotesRepository.save(quote);
+                    return true;
+                }).orElse(false);
+    }
+* */
+    public boolean deleteQuote(int quotesId) {
+        return quotesRepository.findById(quotesId)
+                .map(quote -> {
+                    quotesRepository.delete(quote);
                     return true;
                 }).orElse(false);
     }
