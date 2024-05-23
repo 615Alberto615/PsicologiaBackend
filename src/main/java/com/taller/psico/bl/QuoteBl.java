@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,9 +72,9 @@ public class QuoteBl {
     //Mostrar todas citas hasta la fecha de hoy de un usuario o docente
     public List<QuotesObtenerDTO> getAllQuotesByDateToday(int usuario, Integer userId) {
         LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate formattedDate = LocalDate.parse(today.format(formatter));
-        Timestamp timestamp = Timestamp.valueOf(formattedDate.atStartOfDay());
+        LocalTime staticTime = LocalTime.of(20, 0, 0);
+        LocalDateTime dateTime = LocalDateTime.of(today, staticTime);
+        Timestamp timestamp = Timestamp.valueOf(dateTime);
 
         if (usuario == 1) {
             List<Quotes> quotes = quotesRepository.findByUserId(usuario, timestamp);
