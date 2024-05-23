@@ -147,6 +147,19 @@ public class AvailabilityApi {
         return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), groupedAvailabilities, "Successfully fetched grouped availabilities by user."));
     }
 
+    @GetMapping("/active")
+    public ResponseEntity<ResponseDTO<List<AvailabilityDTO>>> getActiveAvailabilities(@RequestHeader("Authorization") String token) {
+        logger.info("Fetching active availabilities");
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        List<AvailabilityDTO> activeAvailabilities = availabilityBl.getActiveAvailabilities();
+        logger.info("Successfully fetched active availabilities");
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), activeAvailabilities, "Active availabilities fetched successfully."));
+    }
+
+
     //vVer si una avalability esta disponible
     @GetMapping("/disponibilidad/{availabilityId}")
     public ResponseEntity<ResponseDTO<Boolean>> getAvailabilityById(@PathVariable Integer availabilityId, @RequestHeader("Authorization") String token) {
