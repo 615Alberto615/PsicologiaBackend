@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -35,6 +36,9 @@ public class QuoteBl {
     @Autowired
     private AppointmentStatusRepository appointmentStatusRepository;
 
+    @Autowired
+    private EmailSenderBl emailSenderBl;
+
     // Método para crear una nueva cita considerando la disponibilidad
     public QuotesDTO createQuote(QuotesDTO quoteDTO) throws Exception {
         Availability availability = availabilityRepository.findById(quoteDTO.getAvailability().getAvailabilityId())
@@ -50,7 +54,13 @@ public class QuoteBl {
         }*/
         Quotes quote = convertToEntity(new Quotes(), quoteDTO);
         Quotes savedQuote = quotesRepository.save(quote);
+        //enviar email
+        /*emailSenderBl.sendEmail(savedQuote.getUserId().getPeopleId().getEmail().toString(),"Nueva Cita","Querido usuario se creo satisfactoriamente su cita para el "+savedQuote.getStartTime().toString()+" a horas: "+ savedQuote.getAvailabilityId().getStartTime().toString());
+        emailSenderBl.sendEmail(savedQuote.getAvailabilityId().getUserId().getPeopleId().getEmail().toString(),"Nueva Cita","Querido usuario tiene una nueva cita agendada para el "+savedQuote.getStartTime().toString()+" a horas: "+ savedQuote.getAvailabilityId().getStartTime().toString());
+        */
         return convertToDTO(savedQuote);
+
+
     }
 
     //Mostrar si esta disponible una avalability por id y fecha de cita

@@ -21,7 +21,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: asapsitterapp@gmail.com
-    password: xecepobgdgtwcnnk
+    password: uree ixye wmai umra
     properties:
       mail:
         smtp:

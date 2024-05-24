@@ -33,6 +33,9 @@ public class Authbl {
     @Autowired
     private RolRepository rolRepository;
 
+    @Autowired
+    private EmailSenderBl emailSenderBl;
+
     private final String SECRET_KEY = "tupapisoyo";
 
     @Transactional
@@ -102,6 +105,7 @@ public class Authbl {
 
     public TokenDTO loginUser(String username, String password) {
         Optional<Useri> userOpt = userRepository.findByUserName(username);
+
         TokenDTO tokenDTO = new TokenDTO();
         if (userOpt.isPresent()) {
             Useri user = userOpt.get();
@@ -110,7 +114,9 @@ public class Authbl {
                 tokenDTO.setToken(token);
                 tokenDTO.setId(user.getUserId());
                 tokenDTO.setRol(user.getRolId().getRolId());
+                //emailSenderBl.sendEmail(user.getPeopleId().getEmail().toString(), "Inicio de sesión", "Se ha iniciado sesión en el sistema");
                 return tokenDTO;
+
             }
         }
         throw new RuntimeException("Invalid credentials");
