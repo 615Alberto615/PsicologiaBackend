@@ -119,10 +119,10 @@ public class UserBl {
                 .collect(Collectors.toList());
     }
 
-    public List<PeopleDTO> findPeopleByRoleId(Integer rolId) {
+    public List<PeopleObtenerDTO> findPeopleByRoleId(Integer rolId) {
         List<People> allPeople = peopleRepository.findPeopleByRoleId(rolId);
         return allPeople.stream()
-                .map(this::convertToPeopleDTO)
+                .map(this::convertToPeopleObtenerDTO)
                 .collect(Collectors.toList());
     }
 

@@ -146,4 +146,41 @@ public class AvailabilityApi {
         List<UserAvailabilitiesDTO> groupedAvailabilities = availabilityBl.getAllGroupedByUser();
         return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), groupedAvailabilities, "Successfully fetched grouped availabilities by user."));
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<ResponseDTO<List<AvailabilityDTO>>> getActiveAvailabilities(@RequestHeader("Authorization") String token) {
+        logger.info("Fetching active availabilities");
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        List<AvailabilityDTO> activeAvailabilities = availabilityBl.getActiveAvailabilities();
+        logger.info("Successfully fetched active availabilities");
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), activeAvailabilities, "Active availabilities fetched successfully."));
+    }
+
+
+    //vVer si una avalability esta disponible
+    @GetMapping("/disponibilidad/{availabilityId}")
+    public ResponseEntity<ResponseDTO<Boolean>> getAvailabilityById(@PathVariable Integer availabilityId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching availability by ID: {}", availabilityId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching availability.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            Boolean availability = availabilityBl.isAvailabilityAvailable(availabilityId);
+            if (availability != null) {
+                logger.info("Successfully fetched availability for ID: {}", availabilityId);
+                return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), availability, "Availability fetched successfully for ID: " + availabilityId));
+            } else {
+                logger.warn("No availability found for ID: {}", availabilityId);
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while fetching availability for ID: {}. Error: {}", availabilityId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, "An error occurred while fetching the availability for ID: " + availabilityId));
+        }
+    }
 }

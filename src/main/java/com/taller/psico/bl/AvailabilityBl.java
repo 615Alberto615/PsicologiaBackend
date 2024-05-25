@@ -6,8 +6,10 @@ import com.taller.psico.dto.UserAvailabilitiesDTO;
 import com.taller.psico.dto.UseriDTO;
 import com.taller.psico.entity.Availability;
 import com.taller.psico.entity.People;
+import com.taller.psico.entity.Quotes;
 import com.taller.psico.entity.Useri;
 import com.taller.psico.repository.AvailabilityRepotisory;
+import com.taller.psico.repository.QuotesRepository;
 import com.taller.psico.repository.UseriRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class AvailabilityBl {
 
     @Autowired
     private AvailabilityRepotisory availabilityRepository;
+
+    @Autowired
+    private QuotesRepository quotesRepository;
 
     @Autowired
     private UseriRepository useriRepository; // Asegúrate de tener esta inyección para acceder a los usuarios
@@ -54,6 +59,14 @@ public class AvailabilityBl {
                 .orElse(null);
     }
 
+    public List<AvailabilityDTO> getActiveAvailabilities() {
+        return availabilityRepository.findByStatus(true).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
     public void deleteAvailabilityLogically(int availabilityId) {
         Availability availability = availabilityRepository.findById(availabilityId).orElse(null);
         if (availability != null) {
@@ -67,6 +80,15 @@ public class AvailabilityBl {
         return availabilities.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    //Ver si un availability esta disponible
+    public Boolean isAvailabilityAvailable(int availabilityId){
+        List<Quotes> availability = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availabilityId, true);
+        if(availability.size() < 2){
+            return true;
+        }
+        return false;
     }
 
     private AvailabilityDTO convertToDTO(Availability availability) {
@@ -147,5 +169,7 @@ public class AvailabilityBl {
         dto.setStatus(people.getStatus()); // Asegúrate de tener este campo en PeopleDTO si es necesario
         return dto;
     }
+
+
 
 }

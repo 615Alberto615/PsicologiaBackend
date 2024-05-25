@@ -9,6 +9,13 @@ import com.taller.psico.repository.AppointmentStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +36,40 @@ public class QuoteBl {
     @Autowired
     private AppointmentStatusRepository appointmentStatusRepository;
 
+    @Autowired
+    private EmailSenderBl emailSenderBl;
+
     // Método para crear una nueva cita considerando la disponibilidad
     public QuotesDTO createQuote(QuotesDTO quoteDTO) throws Exception {
         Availability availability = availabilityRepository.findById(quoteDTO.getAvailability().getAvailabilityId())
                 .orElseThrow(() -> new RuntimeException("Availability not found"));
 
-        List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
+        /*List<Quotes> existingQuotes = quotesRepository.findByAvailabilityId_AvailabilityIdAndStatus(availability.getAvailabilityId(), true);
         if (existingQuotes.size() < 2) {
             Quotes quote = convertToEntity(new Quotes(), quoteDTO);
             Quotes savedQuote = quotesRepository.save(quote);
             return convertToDTO(savedQuote);
         } else {
             throw new Exception("No more slots available for this time.");
+        }*/
+        Quotes quote = convertToEntity(new Quotes(), quoteDTO);
+        Quotes savedQuote = quotesRepository.save(quote);
+        //enviar email
+        /*emailSenderBl.sendEmail(savedQuote.getUserId().getPeopleId().getEmail().toString(),"Nueva Cita","Querido usuario se creo satisfactoriamente su cita para el "+savedQuote.getStartTime().toString()+" a horas: "+ savedQuote.getAvailabilityId().getStartTime().toString());
+        emailSenderBl.sendEmail(savedQuote.getAvailabilityId().getUserId().getPeopleId().getEmail().toString(),"Nueva Cita","Querido usuario tiene una nueva cita agendada para el "+savedQuote.getStartTime().toString()+" a horas: "+ savedQuote.getAvailabilityId().getStartTime().toString());
+        */
+        return convertToDTO(savedQuote);
+
+
+    }
+
+    //Mostrar si esta disponible una avalability por id y fecha de cita
+    public Boolean isAvailable(IsAvailableDTO isAvailableDTO) {
+        List<Quotes> quotes = quotesRepository.findByAvailabilityIdAndDate(isAvailableDTO.getAvailabilityId(), isAvailableDTO.getStartTime());
+        if (quotes.size() < 2) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -48,6 +77,22 @@ public class QuoteBl {
     public List<QuotesObtenerDTO> getAllQuotes() {
         List<Quotes> quotes = quotesRepository.findAll();
         return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+    }
+
+    //Mostrar todas citas hasta la fecha de hoy de un usuario o docente
+    public List<QuotesObtenerDTO> getAllQuotesByDateToday(int usuario, Integer userId) {
+        LocalDate today = LocalDate.now();
+        LocalTime staticTime = LocalTime.of(20, 0, 0);
+        LocalDateTime dateTime = LocalDateTime.of(today, staticTime);
+        Timestamp timestamp = Timestamp.valueOf(dateTime);
+
+        if (usuario == 1) {
+            List<Quotes> quotes = quotesRepository.findByUserId(usuario, timestamp);
+            return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+        } else {
+            List<Quotes> quotes = quotesRepository.findByTherapistId(usuario, timestamp);
+            return quotes.stream().map(this::convertToQuotesDTO).collect(Collectors.toList());
+        }
     }
 
     // Get user specific quotes
@@ -75,11 +120,20 @@ public class QuoteBl {
     }
 
     // Soft delete a quote by setting its status to false
-    public boolean deleteQuote(int quotesId) {
+/*
+*   public boolean deleteQuote(int quotesId) {
         return quotesRepository.findById(quotesId)
                 .map(quote -> {
                     quote.setStatus(false);
                     quotesRepository.save(quote);
+                    return true;
+                }).orElse(false);
+    }
+* */
+    public boolean deleteQuote(int quotesId) {
+        return quotesRepository.findById(quotesId)
+                .map(quote -> {
+                    quotesRepository.delete(quote);
                     return true;
                 }).orElse(false);
     }

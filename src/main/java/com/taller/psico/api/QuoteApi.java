@@ -2,6 +2,7 @@ package com.taller.psico.api;
 
 import com.taller.psico.bl.Authbl;
 import com.taller.psico.bl.QuoteBl;
+import com.taller.psico.dto.IsAvailableDTO;
 import com.taller.psico.dto.QuotesDTO;
 import com.taller.psico.dto.QuotesObtenerDTO;
 import com.taller.psico.dto.ResponseDTO;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/quote")
+@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class QuoteApi {
     private static final Logger logger = LoggerFactory.getLogger(QuoteApi.class);
     private final QuoteBl quoteBl;
@@ -47,6 +49,23 @@ public class QuoteApi {
         } catch (Exception e) {
             logger.error("Error while creating quote: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al crear cita: " + e.getMessage()));
+        }
+    }
+
+    //Decir un un availability esta disponible por fecha de quote y id de availability
+    @PostMapping("/is-available")
+    public ResponseEntity<ResponseDTO<Boolean>> isAvailable(@RequestBody IsAvailableDTO isAvailableDTO, @RequestHeader("Authorization") String token) {
+        logger.info("Checking if availability is available for quote");
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for checking availability.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            boolean isAvailable = quoteBl.isAvailable(isAvailableDTO);
+            return ResponseEntity.ok(new ResponseDTO<>(200, isAvailable, "Disponibilidad verificada exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while checking availability for quote: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al verificar disponibilidad para cita: " + e.getMessage()));
         }
     }
 
@@ -197,6 +216,42 @@ public class QuoteApi {
         } catch (Exception e) {
             logger.error("Error while fetching dashboard counts: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // Obtener todas las cita hasta la fecha de hoy de un usuario
+    @GetMapping("/user/{userId}/today")
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getUserQuotesToday(@PathVariable int userId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for user with ID: {} until today", userId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching user quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesObtenerDTO> userQuotes = quoteBl.getAllQuotesByDateToday(1,userId);
+            logger.info("Quotes for user ID {} retrieved successfully", userId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, userQuotes, "Citas del usuario recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for user ID {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del usuario: " + e.getMessage()));
+        }
+    }
+
+    // Obtener todas las cita hasta la fecha de hoy de un terapeuta
+    @GetMapping("/therapist/{therapistId}/today")
+    public ResponseEntity<ResponseDTO<List<QuotesObtenerDTO>>> getTherapistQuotesToday(@PathVariable int therapistId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for therapist with ID: {} until today", therapistId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching therapist quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesObtenerDTO> therapistQuotes = quoteBl.getAllQuotesByDateToday(2,therapistId);
+            logger.info("Quotes for therapist ID {} retrieved successfully", therapistId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, therapistQuotes, "Citas del terapeuta recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for therapist ID {}: {}", therapistId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del terapeuta: " + e.getMessage()));
         }
     }
 

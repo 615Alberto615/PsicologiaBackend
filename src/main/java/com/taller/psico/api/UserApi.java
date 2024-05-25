@@ -131,7 +131,7 @@ public class UserApi {
     }
 
     @GetMapping("/peopleByRole/{roleId}")
-    public ResponseEntity<ResponseDTO<List<PeopleDTO>>> findPeopleByRole(
+    public ResponseEntity<ResponseDTO<List<PeopleObtenerDTO>>> findPeopleByRole(
             @PathVariable Integer roleId,
             @RequestHeader("Authorization") String token) {
 
@@ -139,7 +139,7 @@ public class UserApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(401, null, "Unauthorized"));
         }
         try {
-            List<PeopleDTO> people = userBl.findPeopleByRoleId(roleId);
+            List<PeopleObtenerDTO> people = userBl.findPeopleByRoleId(roleId);
             if (people.isEmpty()) {
                 return ResponseEntity.ok(new ResponseDTO<>(404, null, "No people found for the role"));
             }
