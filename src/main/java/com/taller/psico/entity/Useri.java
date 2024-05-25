@@ -29,6 +29,8 @@ public class Useri implements Serializable {
     @Basic(optional = false)
     @Column(name = "status")
     private boolean status;
+    @Column(name = "reset_password_token", nullable = true, length = 250)
+    private String resetPasswordToken;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userPatientId")
     private Collection<Treatment> treatmentCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userPsychiatristId")
@@ -139,6 +141,18 @@ public class Useri implements Serializable {
 
     public void setRolId(Rol rolId) {
         this.rolId = rolId;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 
     public Collection<PreTreatment> getPreTreatmentCollection() {

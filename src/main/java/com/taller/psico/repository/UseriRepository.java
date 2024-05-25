@@ -19,6 +19,8 @@ public interface UseriRepository extends JpaRepository<Useri, Integer> {
     @Query("SELECT u FROM Useri u WHERE u.rolId.rolId = ?1")
     List<Useri> findByRolId(Integer rolId);
 
+    Optional<Useri> findByResetPasswordToken(String resetPasswordToken);
 
-
+    @Query("SELECT u FROM Useri u WHERE u.peopleId.email = ?1")
+    List<Useri> findByEmail(String email);
 }

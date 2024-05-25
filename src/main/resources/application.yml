@@ -21,11 +21,17 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: asapsitterapp@gmail.com
-    password: xecepobgdgtwcnnk
+    password: ureeixyewmaiumra
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
 
+chatgpt:
+  url: https://openrouter.ai/api/v1/chat/completions
+  apikey: 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
