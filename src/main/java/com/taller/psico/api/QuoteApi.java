@@ -151,7 +151,7 @@ public class QuoteApi {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
         }
         try {
-            boolean deleted = quoteBl.deleteQuote(quotesId);
+            boolean deleted = quoteBl.deleteQuoteStatus(quotesId);
             if (deleted) {
                 logger.info("Quote with ID {} deleted successfully", quotesId);
                 return ResponseEntity.ok(new ResponseDTO<>(200, null, "Cita eliminada exitosamente."));

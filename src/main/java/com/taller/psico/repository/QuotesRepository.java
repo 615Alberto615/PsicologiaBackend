@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface QuotesRepository extends JpaRepository<Quotes, Integer> {
 
-    @Query("SELECT q FROM Quotes q WHERE q.userId = :user")
+    @Query("SELECT q FROM Quotes q WHERE q.userId = :user AND q.status = true")
     List<Quotes> findByUser(Useri user);
 
     // Fetch all active quotes for a specific availability

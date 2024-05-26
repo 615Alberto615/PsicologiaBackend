@@ -130,6 +130,14 @@ public class QuoteBl {
                 }).orElse(false);
     }
 * */
+
+    public boolean deleteQuoteStatus(int quotesId) {
+        Quotes quote = quotesRepository.findById(quotesId).orElse(null);
+        quote.setStatus(false);
+        quotesRepository.save(quote);
+        return true;
+    }
+
     public boolean deleteQuote(int quotesId) {
         return quotesRepository.findById(quotesId)
                 .map(quote -> {
