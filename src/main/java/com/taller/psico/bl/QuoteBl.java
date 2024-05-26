@@ -102,6 +102,17 @@ public class QuoteBl {
         return quotes.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    // Get user specific quotes by status false
+    public List<QuotesDTO> getUserQuotesHistorial(int userId, int tipoUsuario) {
+        if (tipoUsuario == 1) {
+            List<Quotes> quotes = quotesRepository.findByUserIdAndStatusFalse(userId);
+            return quotes.stream().map(this::convertToDTO).collect(Collectors.toList());
+        } else {
+            List<Quotes> quotes = quotesRepository.findByTherapistIdAndStatusFalse(userId);
+            return quotes.stream().map(this::convertToDTO).collect(Collectors.toList());
+        }
+    }
+
     // Get a single quote by ID
     public QuotesDTO getQuoteById(int quotesId) {
         return quotesRepository.findById(quotesId)

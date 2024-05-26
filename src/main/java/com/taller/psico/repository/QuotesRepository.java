@@ -15,6 +15,14 @@ public interface QuotesRepository extends JpaRepository<Quotes, Integer> {
     @Query("SELECT q FROM Quotes q WHERE q.userId = :user AND q.status = true")
     List<Quotes> findByUser(Useri user);
 
+    //Todos las citas de usuarios con estado false
+    @Query("SELECT q FROM Quotes q WHERE q.userId.userId = :userId AND q.status = false ")
+    List<Quotes> findByUserIdAndStatusFalse(Integer userId);
+
+    //Todos las citas de usuarios docentes con estado false
+    @Query("SELECT q FROM Quotes q WHERE q.availabilityId.userId.userId = :userId AND q.status = false ")
+    List<Quotes> findByTherapistIdAndStatusFalse(Integer userId);
+
     // Fetch all active quotes for a specific availability
     List<Quotes> findByAvailabilityId_AvailabilityIdAndStatus(Integer availabilityId, boolean status);
 

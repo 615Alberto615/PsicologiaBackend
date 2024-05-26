@@ -104,6 +104,43 @@ public class QuoteApi {
         }
     }
 
+    //obtener todas la cita de un usuario con estado false
+    @GetMapping("/user/historial/{userId}")
+    public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getUserQuotesHistorial(@PathVariable int userId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for user with ID: {}", userId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching user quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesDTO> userQuotes = quoteBl.getUserQuotesHistorial(userId,1);
+            logger.info("Quotes for user ID {} retrieved successfully", userId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, userQuotes, "Citas del usuario recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for user ID {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del usuario: " + e.getMessage()));
+        }
+    }
+
+    //obtener todas la cita de un usuario docente con estado false
+    @GetMapping("/therapist/historial/{therapistId}")
+    public ResponseEntity<ResponseDTO<List<QuotesDTO>>> getUserQuotesHistorialTherapist(@PathVariable int userId, @RequestHeader("Authorization") String token) {
+        logger.info("Fetching quotes for user with ID: {}", userId);
+        if (!authBl.validateToken(token)) {
+            logger.error("Invalid token provided for fetching user quotes.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), null, "Unauthorized"));
+        }
+        try {
+            List<QuotesDTO> userQuotes = quoteBl.getUserQuotesHistorial(userId,2);
+            logger.info("Quotes for user ID {} retrieved successfully", userId);
+            return ResponseEntity.ok(new ResponseDTO<>(200, userQuotes, "Citas del usuario recuperadas exitosamente."));
+        } catch (Exception e) {
+            logger.error("Error while retrieving quotes for user ID {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(400, null, "Error al recuperar las citas del usuario: " + e.getMessage()));
+        }
+    }
+
+
     @GetMapping("/{quotesId}")
     public ResponseEntity<ResponseDTO<QuotesDTO>> getQuoteById(@PathVariable int quotesId, @RequestHeader("Authorization") String token) {
         logger.info("Fetching quote with ID: {}", quotesId);
