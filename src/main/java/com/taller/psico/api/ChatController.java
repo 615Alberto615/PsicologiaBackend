@@ -12,6 +12,8 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/api/chat")
+@CrossOrigin(origins = "*", methods = {org.springframework.web.bind.annotation.RequestMethod.GET, org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.PUT, org.springframework.web.bind.annotation.RequestMethod.DELETE})
+
 public class ChatController {
 
     @Autowired

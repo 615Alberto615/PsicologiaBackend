@@ -82,9 +82,9 @@ public class QuoteBl {
     //Mostrar todas citas hasta la fecha de hoy de un usuario o docente
     public List<QuotesObtenerDTO> getAllQuotesByDateToday(int usuario, Integer userId) {
         LocalDate today = LocalDate.now();
-        LocalTime staticTime = LocalTime.of(20, 0, 0);
-        LocalDateTime dateTime = LocalDateTime.of(today, staticTime);
-        Timestamp timestamp = Timestamp.valueOf(dateTime);
+        LocalDateTime endOfToday = today.atTime(23, 59, 59,0);
+        Timestamp timestamp = Timestamp.valueOf(endOfToday);
+
 
         if (usuario == 1) {
             List<Quotes> quotes = quotesRepository.findByUserId(usuario, timestamp);

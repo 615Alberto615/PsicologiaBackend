@@ -1,4 +1,4 @@
-package com.taller.psico.Config;
+/*package com.taller.psico.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -16,4 +16,4 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowCredentials(true);  // Permite cookies y autenticación básica
     }
 
-}
+}*/

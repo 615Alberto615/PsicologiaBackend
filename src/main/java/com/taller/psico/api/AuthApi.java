@@ -91,23 +91,20 @@ public class AuthApi {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        // Si hay múltiples usuarios, decide cómo manejarlo. Ejemplo: enviar correos a todos.
         users.forEach(user -> {
             String token = UUID.randomUUID().toString();
             user.setResetPasswordToken(token);
             userRepository.save(user);
 
-            String resetLink = "http://localhost:5173/recuperar?token=" + token;
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getPeopleId().getEmail());
             message.setSubject("Reset Your Password");
-            message.setText("To reset your password, click the following link: " + resetLink);
+            message.setText("Use the following token to reset your password: " + token);
             emailSender.send(message);
         });
 
-        return ResponseEntity.ok("Reset password links sent successfully to all associated accounts");
+        return ResponseEntity.ok("Reset password tokens sent successfully to all associated accounts");
     }
-
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
@@ -125,7 +122,7 @@ public class AuthApi {
         user.setResetPasswordToken(null);  // Limpia el token después de usar
         userRepository.save(user);
 
-        return ResponseEntity.ok("La contraseña ha sido restablecida exitosamente");
+        return ResponseEntity.ok(new ResponseDTO2<>(HttpStatus.OK.value(), "La contraseña ha sido restablecida exitosamente"));
     }
 
 
@@ -148,6 +145,32 @@ public class AuthApi {
 
         public void setNewPassword(String newPassword) {
             this.newPassword = newPassword;
+        }
+    }
+    static class ResponseDTO2<T> {
+        private int status;
+        private T data;
+
+        public ResponseDTO2(int status, T data) {
+            this.status = status;
+            this.data = data;
+        }
+
+        // Getters and setters
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public void setData(T data) {
+            this.data = data;
         }
     }
 
