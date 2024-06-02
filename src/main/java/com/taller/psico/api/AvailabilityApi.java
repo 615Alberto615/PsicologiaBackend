@@ -17,8 +17,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/availability")
-@CrossOrigin(origins = "*", methods = {org.springframework.web.bind.annotation.RequestMethod.GET, org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.PUT, org.springframework.web.bind.annotation.RequestMethod.DELETE})
-
 public class AvailabilityApi {
     private static final Logger logger = LoggerFactory.getLogger(AvailabilityApi.class);
     private final AvailabilityBl availabilityBl;

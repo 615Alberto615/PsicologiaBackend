@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/quote")
-@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class QuoteApi {
     private static final Logger logger = LoggerFactory.getLogger(QuoteApi.class);
     private final QuoteBl quoteBl;

@@ -24,7 +24,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*", methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class AuthApi {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthApi.class);
