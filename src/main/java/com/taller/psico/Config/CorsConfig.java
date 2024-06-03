@@ -9,8 +9,11 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // Permite CORS en todas las rutas
-                .allowedOrigins("http://localhost:5173")  // Permite solicitudes desde este origen
+        registry.addMapping("/**")
+                .allowedOrigins(
+                        "http://localhost:5173",  // Permite solicitudes desde el entorno de desarrollo
+                        "https://psique-d2576.web.app"  // Permite solicitudes desde Firebase
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Métodos HTTP permitidos
                 .allowedHeaders("*")  // Permite todos los headers
                 .allowCredentials(true);  // Permite cookies y autenticación básica
