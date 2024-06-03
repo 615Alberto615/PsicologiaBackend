@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/v1/chat")
 public class ChatController {
 
     @Autowired
