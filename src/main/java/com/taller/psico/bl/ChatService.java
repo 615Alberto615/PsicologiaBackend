@@ -33,7 +33,10 @@ public class ChatService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(apiKey);
 
-        String requestBody = String.format("{\"model\": \"gpt-4\", \"prompt\": \"%s\", \"max_tokens\": 150}", chatMessage.getMessage());
+//        String requestBody = String.format("{\"model\": \"gpt-4\", \"prompt\": \"%s\", \"max_tokens\": 150}", chatMessage.getMessage());
+        String requestBody = String.format("{\"model\": \"gpt-3.5-turbo\", \"prompt\": \"%s\", \"max_tokens\": 150}", chatMessage.getMessage());
+//        String requestBody = String.format("{\"model\": \"gpt-3.5-turbo-16k\", \"prompt\": \"%s\", \"max_tokens\": 150}", chatMessage.getMessage());
+
 
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
         RestTemplate restTemplate = new RestTemplate();
