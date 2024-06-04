@@ -35,4 +35,4 @@ spring:
 
 chatgpt:
   url: https://openrouter.ai/api/v1/chat/completions
-  apikey: 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
+  apikey: ${api_key}
