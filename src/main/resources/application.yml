@@ -5,11 +5,10 @@ spring:
   application:
     name: ms-profile
   datasource:
-    type: org.postgresql.ds.PGSimpleDataSource  # Cambio aquí para usar el driver correcto
-    username: ${POSTGRES_USERNAME:psicodb_user}
-    password: ${POSTGRES_PASSWORD:tbhzqj4uykYY6CSOkmcmhxiKFjjBJ6pY}
-    url: ${POSTGRES_URL:jdbc:postgresql://dpg-cpeb55dds78s73etol00-a.oregon-postgres.render.com:5432/psicodb}  # Corrección aquí para usar el formato adecuado
-    driver-class-name: org.postgresql.Driver  # Asegurándonos de especificar el driver
+    type: org.postgresql.jdbc2.optional.SimpleDataSource
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:password}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/PsicoDB}
   jpa:
     hibernate:
       ddl-auto: update
