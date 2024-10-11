@@ -18,6 +18,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -109,14 +110,53 @@ public class Authbl {
         TokenDTO tokenDTO = new TokenDTO();
         if (userOpt.isPresent()) {
             Useri user = userOpt.get();
-            if (BCrypt.checkpw(password, user.getPassword())) {
-                String token = generateToken(user);
-                tokenDTO.setToken(token);
-                tokenDTO.setId(user.getUserId());
-                tokenDTO.setRol(user.getRolId().getRolId());
-                //emailSenderBl.sendEmail(user.getPeopleId().getEmail().toString(), "Inicio de sesión", "Se ha iniciado sesión en el sistema");
-                return tokenDTO;
+            if (user.getBloqueado() == null){
+                user.setBloqueado(0);
+            }
+            if (user.getBloqueado() == 3) {
+                if (LocalDateTime.now().isAfter(user.getTiempoBloqueo())) {
+                    user.setBloqueado(0);
+                    //comprobar si la contrasenia es correcta
+                    if (BCrypt.checkpw(password, user.getPassword())) {
+                        String token = generateToken(user);
+                        tokenDTO.setToken(token);
+                        tokenDTO.setId(user.getUserId());
+                        tokenDTO.setRol(user.getRolId().getRolId());
+                        user.setBloqueado(0);
+                        userRepository.save(user);
+                        //emailSenderBl.sendEmail(user.getPeopleId().getEmail().toString(), "Inicio de sesión", "Se ha iniciado sesión en el sistema");
+                        return tokenDTO;
+                    } else {
+                        user.setBloqueado(user.getBloqueado() + 1);
+                        userRepository.save(user);
+                        throw new RuntimeException("Invalid credentials");
+                    }
+                } else {
+                    tokenDTO = null;
+                    return tokenDTO;
+                }
+            }else {
+                if (BCrypt.checkpw(password, user.getPassword())) {
+                    String token = generateToken(user);
+                    tokenDTO.setToken(token);
+                    tokenDTO.setId(user.getUserId());
+                    tokenDTO.setRol(user.getRolId().getRolId());
+                    user.setBloqueado(0);
+                    userRepository.save(user);
+                    //emailSenderBl.sendEmail(user.getPeopleId().getEmail().toString(), "Inicio de sesión", "Se ha iniciado sesión en el sistema");
+                    return tokenDTO;
 
+                }else {
+                    user.setBloqueado(user.getBloqueado() + 1);
+                    if (user.getBloqueado() == 3) {
+                        user.setTiempoBloqueo(LocalDateTime.now().plusMinutes(2));
+                        userRepository.save(user);
+                        tokenDTO = null;
+                        return tokenDTO;
+                    }
+                    userRepository.save(user);
+                    throw new RuntimeException("Invalid credentials");
+                }
             }
         }
         throw new RuntimeException("Invalid credentials");

@@ -56,12 +56,15 @@ public class AuthApi {
         try {
             logger.info("Attempting to login user: {}", userDto.getUserName());
             TokenDTO token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
+            if (token == null) {
+                return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Usuario bloqueado termporalmente"));
+            }
             //String token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
             logger.info("Login successful for user: {}", userDto.getUserName());
-            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), token, "Login successful"));
+            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), token, "Inicio de Sesion exitoso!"));
         } catch (RuntimeException e) {
             logger.error("Login failed for user: {} - Error: {}", userDto.getUserName(), e.getMessage());
-            return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Invalid credentials"));
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Contrasenia o usuario incorrectos"));
         }
     }
 

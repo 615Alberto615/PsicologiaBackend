@@ -2,6 +2,8 @@ package com.taller.psico.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 
 @Entity
@@ -46,6 +48,11 @@ public class Useri implements Serializable {
     @ManyToOne(optional = false)
     private Rol rolId;
 
+    @Column(name = "bloqueado ", nullable = true)
+    private Integer bloqueado;
+    @Column(name = "tiempo_bloqueo", nullable = true)
+    private LocalDateTime tiempoBloqueo;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<PreTreatment> preTreatmentCollection;
 
@@ -61,6 +68,22 @@ public class Useri implements Serializable {
         this.userName = userName;
         this.password = password;
         this.status = status;
+    }
+
+    public Integer getBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(Integer bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+
+    public LocalDateTime getTiempoBloqueo() {
+        return tiempoBloqueo;
+    }
+
+    public void setTiempoBloqueo(LocalDateTime tiempoBloqueo) {
+        this.tiempoBloqueo = tiempoBloqueo;
     }
 
     public Integer getUserId() {
