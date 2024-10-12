@@ -43,8 +43,11 @@ public class AuthApi {
         try {
             logger.info("Attempting to register user: {}", registrationRequest.getUserDto().getUserName());
             UseriDTO result = authService.registerUser(registrationRequest.getUserDto(), registrationRequest.getPeopleDto());
+            if (result == null) {
+                return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Ya existe un usuario con este correo"));
+            }
             logger.info("User registered successfully: {}", registrationRequest.getUserDto().getUserName());
-            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), result, "User registered successfully"));
+            return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), result, "Usuario registrado exitosamente!"));
         } catch (Exception e) {
             logger.error("Registration failed for user: {} - Error: {}", registrationRequest.getUserDto().getUserName(), e.getMessage());
             return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Registration failed: " + e.getMessage()));

@@ -41,6 +41,14 @@ public class Authbl {
 
     @Transactional
     public UseriDTO registerUser(UseriDTO userDto, PeopleDTO peopleDto) {
+
+        // Búsqueda de el usuario por el email
+        Useri userOpt = userRepository.findByEmailUser(peopleDto.getEmail());
+        if (userOpt != null) {
+            userDto = null;
+            return userDto;
+        }
+
         // Configuración de dominios
         Domains Gender = new Domains();
         Domains Occupation = new Domains();
@@ -149,7 +157,7 @@ public class Authbl {
                 }else {
                     user.setBloqueado(user.getBloqueado() + 1);
                     if (user.getBloqueado() == 3) {
-                        user.setTiempoBloqueo(LocalDateTime.now().plusMinutes(2));
+                        user.setTiempoBloqueo(LocalDateTime.now().plusMinutes(15));
                         userRepository.save(user);
                         tokenDTO = null;
                         return tokenDTO;
