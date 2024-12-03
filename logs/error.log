@@ -1,0 +1,2 @@
+2024-12-03 12:15:11 [http-nio-8004-exec-2] ERROR com.taller.psico.api.AuthApi - Login failed for user: admin - Error: Invalid credentials
+2024-12-03 15:59:52 [http-nio-8004-exec-2] ERROR com.taller.psico.api.AuthApi - Direccion IP: 0:0:0:0:0:0:0:1,Error de inicio de sesión para la usuario: jaskd - Error: Invalid credentials
