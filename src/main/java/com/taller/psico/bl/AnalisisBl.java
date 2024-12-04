@@ -42,6 +42,17 @@ public class AnalisisBl {
     //Actualizar un analisis
     public void updateAnalisis(Integer analisisId, AnalisisDto analisisDTO) {
         Analisis analisis = analisisRepository.findByIdAnalisis(analisisId);
+
+        if (analisis == null) {
+            throw new RuntimeException("El análisis con ID " + analisisId + " no fue encontrado.");
+        }
+
+        // Imprime los datos para depuración
+        System.out.println("Actualizando el análisis con ID: " + analisisId);
+        System.out.println("Datos anteriores: " + analisis);
+        System.out.println("Datos nuevos: " + analisisDTO);
+
+        // Actualiza los campos
         analisis.setActivo(analisisDTO.getActivo());
         analisis.setAmenaza(analisisDTO.getAmenaza());
         analisis.setConsecuencia(analisisDTO.getConsecuencia());
@@ -59,12 +70,17 @@ public class AnalisisBl {
         analisis.setRiesgoResidual(analisisDTO.getRiesgoResidual());
         analisis.setNivelRiesgoResidual(analisisDTO.getNivelRiesgoResidual());
         analisis.setUpdatedAt(analisisDTO.getUpdatedAt());
+
         analisisRepository.save(analisis);
     }
+
 
     //Mostrar todos los analisis
     public List<AnalisisDto> findAllAnalisis() {
         List<Analisis> analisisList = analisisRepository.findAllAnalisis();
+
+        System.out.println("Datos obtenidos de la base de datos: " + analisisList);
+
         return analisisList.stream().map(analisis -> {
             AnalisisDto analisisDTO = new AnalisisDto();
             analisisDTO.setId(analisis.getId());
@@ -90,10 +106,18 @@ public class AnalisisBl {
         }).collect(Collectors.toList());
     }
 
+
     //Eliminar por id
     public void deleteAnalisis(Integer analisisId) {
         Analisis analisis = analisisRepository.findByIdAnalisis(analisisId);
+
+        if (analisis == null) {
+            throw new RuntimeException("El análisis con ID " + analisisId + " no fue encontrado.");
+        }
+
+        System.out.println("Eliminando el análisis con ID: " + analisisId);
         analisisRepository.delete(analisis);
     }
+
 
 }

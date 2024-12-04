@@ -64,14 +64,14 @@ public class AuthApi {
             logger.info("Direccion IP: {},Intentando registrar usuario: {}",clientIp, userDto.getUserName());
             TokenDTO token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
             if (token == null) {
-                return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Usuario bloqueado termporalmente"));
+                return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Usuario bloqueado temporalmente"));
             }
             //String token = authService.loginUser(userDto.getUserName(), userDto.getPassword());
             logger.info("Direccion IP: {},Inicio de sesión exitoso para la usuario: {}",clientIp, userDto.getUserName());
             return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.value(), token, "Inicio de Sesion exitoso!"));
         } catch (RuntimeException e) {
             logger.error("Direccion IP: {},Error de inicio de sesión para la usuario: {} - Error: {}",clientIp, userDto.getUserName(), e.getMessage());
-            return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Contrasenia o usuario incorrectos"));
+            return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Contraseña o usuario incorrectos"));
         }
     }
 

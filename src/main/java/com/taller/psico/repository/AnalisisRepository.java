@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AnalisisRepository extends JpaRepository<Analisis, Integer> {
-    //Mostrar todos los analisis
-    @Query(value = "SELECT * FROM analisis", nativeQuery = true)
+    // Mostrar todos los análisis
+    @Query(value = "SELECT * FROM risk_analysis", nativeQuery = true)
     List<Analisis> findAllAnalisis();
 
-    //Obtener por id
-    @Query(value = "SELECT * FROM analisis WHERE analisis_id = ?1", nativeQuery = true)
+    // Obtener por ID
+    @Query(value = "SELECT * FROM risk_analysis WHERE id = ?1", nativeQuery = true)
     Analisis findByIdAnalisis(Integer analisisId);
+
 }

@@ -31,14 +31,20 @@ public class AnalisisApi {
 
     //Modificar un analisis
     @PutMapping("/update/{analisisId}")
-    public ResponseEntity<ResponseDTO<AnalisisDto>> updateAnalisis(@PathVariable Integer analisisId, @RequestBody AnalisisDto analisisDto){
-        analisisBl.updateAnalisis(analisisId, analisisDto);
+    public ResponseEntity<ResponseDTO<AnalisisDto>> updateAnalisis(@PathVariable Integer analisisId, @RequestBody AnalisisDto analisisDto) {
         try {
-            return ResponseEntity.ok(new ResponseDTO<>(200,analisisDto, "Analisis actualizado correctamente"));
+            System.out.println("ID recibido para actualizar: " + analisisId);
+            System.out.println("Payload recibido: " + analisisDto);
+
+            analisisBl.updateAnalisis(analisisId, analisisDto);
+            return ResponseEntity.ok(new ResponseDTO<>(200, analisisDto, "Análisis actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO<>(HttpStatus.BAD_REQUEST.value(), null, "Error al actualizar el analisis"));
+            e.printStackTrace(); // Imprime el error completo para depuración
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, "Error al actualizar el análisis: " + e.getMessage()));
         }
     }
+
 
     //Mostrar todos los analisis
     @GetMapping("/all")

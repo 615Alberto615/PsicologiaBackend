@@ -80,7 +80,7 @@ public class Authbl {
         // Creación de la entidad Useri
         Useri user = new Useri();
         user.setUserName(userDto.getUserName());
-        user.setPassword(BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()));
+        user.setPassword(BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()));//hasheo
         user.setStatus(userDto.getStatus());
         user.setPeopleId(people);
         user.setRolId(rol);
